@@ -38,7 +38,7 @@ public class ImageDao implements Dao<Image> {
   @Override
   public List<Image> retrieveAll() {
     ArrayList<Image> liste = new ArrayList<Image>();
-    images.forEach((id, img) ->{
+    images.forEach((id, img) -> {
       liste.add(img);
     });
     return liste;

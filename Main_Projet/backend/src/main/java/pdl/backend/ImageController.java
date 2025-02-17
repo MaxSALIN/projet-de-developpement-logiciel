@@ -41,9 +41,9 @@ public class ImageController {
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException{
+  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     var imgFile = imageDao.retrieve(id).get();
-    byte [] bytes = imgFile.getData();
+    byte[] bytes = imgFile.getData();
     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
   }
 
@@ -57,19 +57,15 @@ public class ImageController {
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
-          if(file.getContentType()==MediaType.APPLICATION_PDF_VALUE){
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
-            
-          }
-          else{
-            byte [] data = file.getBytes();
-            Image imgFile = new Image(file.getOriginalFilename(), data);
-            imageDao.create(imgFile);
-            return ResponseEntity.ok().body(null);
-          }
-          
-        
-        
+    if (file.getContentType() != MediaType.IMAGE_JPEG_VALUE && file.getContentType() != MediaType.IMAGE_PNG_VALUE) {
+      return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
+
+    } else {
+      byte[] data = file.getBytes();
+      Image imgFile = new Image(file.getOriginalFilename(), data);
+      imageDao.create(imgFile);
+      return ResponseEntity.ok().body(null);
+    }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
@@ -83,8 +79,6 @@ public class ImageController {
       node.put("id", image.getId());
       nodes.add(node);
     }
-    
-    
 
     return nodes;
   }
