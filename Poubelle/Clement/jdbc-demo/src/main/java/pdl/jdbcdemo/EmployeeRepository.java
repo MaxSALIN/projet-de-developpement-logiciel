@@ -12,9 +12,8 @@ public class EmployeeRepository implements InitializingBean {
   private JdbcTemplate jdbcTemplate;
 
   public static String fichier[] = new String[] { "arbre.jpeg", "test.jpeg" };
-  public static Pair<String, String> names[] = new Pair<String,String>[] { "arbre", "chien" };
+  public static String names[] = new String[] { "arbre", "chien" };
 
-  public static Pair<String, String> pairs = Pair.fromIterable(names, fichier);
   @Override
   public void afterPropertiesSet() throws Exception {
     // Drop table
@@ -24,7 +23,7 @@ public class EmployeeRepository implements InitializingBean {
     this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS employee (id bigserial PRIMARY KEY, name character varying(255), fichier character varying(255))");
 
     // Insert rows
-    jdbcTemplate.update("INSERT INTO employee (name, fichier) VALUES (?, ?), (?, ?), (?, ?)", pairs);
+    jdbcTemplate.update("INSERT INTO employee (name, fichier) VALUES (?, ?)", (String) names[0], (String) fichier[0]);
   }
 
   public int getNbEmployees() {
