@@ -63,7 +63,7 @@ public class ImageController {
           }
           else{
             byte [] data = file.getBytes();
-            Image imgFile = new Image(file.getName(), data);
+            Image imgFile = new Image(file.getOriginalFilename(), data);
             imageDao.create(imgFile);
             return ResponseEntity.ok().body(null);
           }
