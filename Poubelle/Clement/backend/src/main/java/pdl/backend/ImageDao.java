@@ -32,8 +32,6 @@ public class ImageDao implements Dao<Image> {
   @Override
   public Optional<Image> retrieve(final long id) {
     return Optional.ofNullable(images.get(id));
-    jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class, id);
-
   }
 
   @Override
@@ -59,6 +57,5 @@ public class ImageDao implements Dao<Image> {
   @Override
   public void delete(final Image img) {
     images.remove(img.getId(), img);
-    jdbcTemplate.update("DELETE FROM gallery WHERE id=?", img.getId());
   }
 }

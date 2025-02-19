@@ -1,25 +1,13 @@
 package pdl.backend;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.nio.file.Files;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,32 +17,52 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 @RestController
 public class ImageController {
 
   @Autowired
   private ObjectMapper mapper;
 
-  private final ImageDao imageDao;
+  private final Database database;
 
   @Autowired
-  public ImageController(ImageDao imageDao) {
-    this.imageDao = imageDao;
+  public ImageController(Database database){
+    this.database= database;
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
-    var imgFile = imageDao.retrieve(id).get();
-    byte[] bytes = imgFile.getData();
+    byte[] fileContent = new byte[] {};
+    try {
+      String img = database.retrieve(id);
+      final ClassPathResource imgFile = new ClassPathResource(img);
+      
+      try {
+        fileContent = Files.readAllBytes(imgFile.getFile().toPath());
+      } catch (final IOException e) {
+        e.printStackTrace();
+      }
+
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+
     // retourne l'image en bytes depuis le dossier d'images ( ici imageDao )
     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG)
-        .body(bytes);
+        .body(fileContent);
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
-    var imgFile = imageDao.retrieve(id).get();
-    imageDao.delete(imgFile);
+    try {
+      database.delete(id);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(null);
   }
 
@@ -65,7 +73,11 @@ public class ImageController {
     Image img = new Image(file.getName(), filecontent); // curl -X POST -F
                                                         // "file=@/autofs/unitytravail/travail/clemsimon/L3/s6/projet/backend/src/main/resources/arbre.jpeg"
                                                         // "http://localhost:8181/images"
-    imageDao.create(img);
+    try {
+      database.create(img);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
     return ResponseEntity.ok().body(null);
   }
 
@@ -73,14 +85,18 @@ public class ImageController {
   @ResponseBody
   public ArrayNode getImageList() throws IOException {
     ArrayNode nodes = mapper.createArrayNode();
-    List<Image> listAll = imageDao.retrieveAll();
-    for (Image img : listAll) {
-      ObjectNode node = mapper.createObjectNode();
-      node.put("name", img.getName());
-      node.put("id", img.getId());
-      nodes.add(node);
-
+    try {
+      Collection<Image> listAll = database.retrieveAll();
+      for (Image img : listAll) {
+        ObjectNode node = mapper.createObjectNode();
+        node.put("name", img.getName());
+        node.put("id", img.getId());
+        nodes.add(node);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
     return nodes;
   }
 
