@@ -61,6 +61,10 @@ public class ImageController {
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
+      File imgFile = new File(
+          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+              + database.retrieve(id));
+      imgFile.delete();
       database.delete(id);
     } catch (Exception e) {
       e.printStackTrace();

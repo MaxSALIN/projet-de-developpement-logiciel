@@ -58,7 +58,7 @@ public class Database implements InitializingBean {
     }
 
     public int delete(final Long id) throws Exception {
-        return jdbcTemplate.update("DELETE FROM gallery WHERE id=?", id);
+        return jdbcTemplate.update("DELETE FROM gallery WHERE id=?", id + 1);
     }
 
     public void update(final Image img, final String[] params) throws Exception {
@@ -66,7 +66,15 @@ public class Database implements InitializingBean {
     }
 
     public String retrieve(final long id) throws Exception {
-        return jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class, (id + 1));
+        String finalString;
+        if (id > jdbcTemplate.queryForObject("SELECT MAX(id) FROM gallery", Long.class)) {
+            finalString = "";
+        } else {
+            finalString = jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class,
+                    (id + 1));
+
+        }
+        return finalString;
     }
 
     public Collection<Image> retrieveAll() throws Exception {
