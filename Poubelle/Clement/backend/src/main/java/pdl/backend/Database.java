@@ -31,21 +31,25 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, orientation INTEGER NOT NULL REFERENCES orientations(id))");
-        ClassPathResource directoryResource = new ClassPathResource(
-                "images/");
-        File folder = directoryResource.getFile();
-        Path folderPath = folder.toPath();
-        try (Stream<Path> paths = Files.walk(folderPath)) {
-            paths.filter(Files::isRegularFile).forEach(path -> {
-                if (path.getFileName().toString().endsWith(".jpeg")) {
-                    this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
-                            path.getFileName().toString(), 1);
-                }
-                if (path.getFileName().toString().endsWith(".png")) {
-                    this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
-                            path.getFileName().toString(), 1);
-                }
-            });
+        try {
+            ClassPathResource directoryResource = new ClassPathResource(
+                    "images/");
+            File folder = directoryResource.getFile();
+            Path folderPath = folder.toPath();
+            try (Stream<Path> paths = Files.walk(folderPath, 1)) {
+                paths.filter(Files::isRegularFile).forEach(path -> {
+                    if (path.getFileName().toString().endsWith(".jpeg")) {
+                        this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
+                                path.getFileName().toString(), 1);
+                    }
+                    if (path.getFileName().toString().endsWith(".png")) {
+                        this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
+                                path.getFileName().toString(), 1);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
