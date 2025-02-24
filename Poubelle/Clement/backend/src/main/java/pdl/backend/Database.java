@@ -54,7 +54,7 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (fichier) VALUES (?)", img.getName());
+        return jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)", img.getName(), 1);
     }
 
     public int delete(final Long id) throws Exception {
