@@ -30,23 +30,23 @@ public class ImageController {
   private final Database database;
 
   @Autowired
-  public ImageController(Database database){
-    this.database= database;
+  public ImageController(Database database) {
+    this.database = database;
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
     try {
-      String img = database.retrieve(id);
-      final ClassPathResource imgFile = new ClassPathResource(img);
-      
-      try {
-        fileContent = Files.readAllBytes(imgFile.getFile().toPath());
-      } catch (final IOException e) {
-        e.printStackTrace();
+      String img = "images/" + database.retrieve(id);
+      if (img != "") {
+        final ClassPathResource imgFile = new ClassPathResource(img);
+        try {
+          fileContent = Files.readAllBytes(imgFile.getFile().toPath());
+        } catch (final IOException e) {
+          e.printStackTrace();
+        }
       }
-
     } catch (Exception e) {
       e.printStackTrace();
     }
