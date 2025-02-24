@@ -11,6 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import pdl.backend.ImageDao;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.InputStreamResource;
@@ -42,29 +44,41 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
-    var imgFile = imageDao.retrieve(id).get();
-    byte[] bytes = imgFile.getData();
-    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    try {
+      var imgFile = imageDao.retrieve(id).get();
+      byte[] bytes = imgFile.getData();
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    } catch (NullPointerException e) {
+      System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
-    var imgFile = imageDao.retrieve(id).get();
-    imageDao.delete(imgFile);
-    return ResponseEntity.ok().body(null);
+    try {
+      var imgFile = imageDao.retrieve(id).get();
+      imageDao.delete(imgFile);
+      return ResponseEntity.ok().body(null);
+    } catch (NullPointerException e) {
+      System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
-    if (file.getContentType() != MediaType.IMAGE_JPEG_VALUE && file.getContentType() != MediaType.IMAGE_PNG_VALUE) {
+    if (!(file
+        .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
+        && !(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE))) {
       return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
 
     } else {
       byte[] data = file.getBytes();
       Image imgFile = new Image(file.getOriginalFilename(), data);
       imageDao.create(imgFile);
-      return ResponseEntity.ok().body(null);
+      return ResponseEntity.status(HttpStatus.CREATED).body(data);
     }
   }
 
