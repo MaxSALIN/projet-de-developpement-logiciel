@@ -76,7 +76,8 @@ public class ImageController {
 
     } else {
       byte[] data = file.getBytes();
-      Image imgFile = new Image(file.getOriginalFilename(), data);
+      Long size = file.getSize();
+      Image imgFile = new Image(file.getOriginalFilename(), data, file.getContentType(), size.toString());
       imageDao.create(imgFile);
       return ResponseEntity.status(HttpStatus.CREATED).body(data);
     }
@@ -91,6 +92,8 @@ public class ImageController {
       ObjectNode node = mapper.createObjectNode();
       node.put("name", image.getName());
       node.put("id", image.getId());
+      node.put("type", image.getType());
+      node.put("size", image.getSize());
       nodes.add(node);
     }
 
