@@ -31,7 +31,7 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, orientation INTEGER NOT NULL REFERENCES orientations(id))");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, orientation INTEGER NOT NULL REFERENCES orientations(id), data character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
                     "images/");
@@ -55,7 +55,7 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)", img.getName(), 1);
+        return jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)", img.getName(), 1/*img.getOrientation() */);
     }
 
     public int delete(final Long id) throws Exception {
@@ -79,6 +79,6 @@ public class Database implements InitializingBean {
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT fichier, id FROM gallery", new BeanPropertyRowMapper<>(Image.class));
+        return jdbcTemplate.query("SELECT id, data FROM gallery", new BeanPropertyRowMapper<>(Image.class));
     }
 }

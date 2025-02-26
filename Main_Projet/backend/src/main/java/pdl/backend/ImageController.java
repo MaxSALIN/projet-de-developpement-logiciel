@@ -47,6 +47,7 @@ public class ImageController {
           fileContent = Files.readAllBytes(imgFile.getFile().toPath());
         } catch (final IOException e) {
           System.err.println(e);
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
       }
       return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
@@ -66,6 +67,7 @@ public class ImageController {
       database.delete(id);
     } catch (Exception e) {
       System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
     return ResponseEntity.ok().body(null);
   }
@@ -102,8 +104,10 @@ public class ImageController {
       Collection<Image> listAll = database.retrieveAll();
       for (Image img : listAll) {
         ObjectNode node = mapper.createObjectNode();
-        node.put("name", img.getName());
         node.put("id", img.getId());
+        node.put("name", img.getName());
+        // node.put("type", img.getType());
+        // node.put("size", img.getSize());
         nodes.add(node);
       }
     } catch (Exception e) {
