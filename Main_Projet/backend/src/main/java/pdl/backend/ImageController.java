@@ -49,10 +49,11 @@ public class ImageController {
           System.err.println(e);
         }
       }
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
     } catch (Exception e) {
       System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
-    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
@@ -89,7 +90,7 @@ public class ImageController {
         } catch (Exception e) {
           System.err.println(e);
         }
-        return ResponseEntity.ok().body(null);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
       }
   }
 
