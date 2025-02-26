@@ -9,7 +9,7 @@
             "name": "Launch ColorProcessing",
             "request": "launch",
             "mainClass": "imageprocessing.ColorProcessing",
-            "args": "colorimages/mountains.jpg images_result_TP4/Q1/mountains_.jpg"
+            "args": "colorimages/mountains.jpg images_result_TP4/Q1/mountains_test.jpg"
         },
         {
             "type": "java",
@@ -20,9 +20,10 @@
         },
         {
             "type": "java",
-            "name": "Current File",
+            "name": "SimilarImages",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "imageprocessing.SimilarImages",
+            "args": "colorimages/hamac-640x426.jpg hamac-640x426.jpg_test.jpg"
         },
         {
             "type": "java",

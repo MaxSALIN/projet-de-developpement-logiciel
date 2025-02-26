@@ -31,6 +31,31 @@ function downloadImage(image: any){
   });
 }
 
+function saveImageOnComputer(image : any){
+  axios.get('/images/'+image.id, { responseType:"blob" })
+    .then(function (response) {
+      response.data
+    })
+  /*{
+    let formData = new FormData();
+;
+    formData.append(image.gete, image);
+    axios.post( '/images',
+      formData,
+      {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+      }
+    ).then(function(){
+      console.log('SUCCESS!!');
+    })
+    .catch(function(){
+      console.log('FAILURE!!');
+    });
+  }*/
+}
+
 function concatURL(imageId :any){
     return "/images/".concat(imageId)
 }

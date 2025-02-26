@@ -58,7 +58,7 @@ public class Convolution {
 
   public static void gradientImage(GrayU8 input, GrayU8 output, int[][] kernelX, int[][] kernelY){
       GrayS16 outputX=new GrayS16(output.getWidth(), output.getHeight());
-    convolution(input, outputX, kernelX);
+      convolution(input, outputX, kernelX);
       GrayS16 outputY=new GrayS16(output.getWidth(), output.getHeight());
       convolution(input, outputY, kernelY);
 
