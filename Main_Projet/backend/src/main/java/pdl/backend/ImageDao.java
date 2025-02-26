@@ -25,7 +25,7 @@ public class ImageDao implements Dao<Image> {
       Image img = new Image("logo.jpg", fileContent);
       images.put(img.getId(), img);
     } catch (final IOException e) {
-      e.printStackTrace();
+      System.err.println(e);
     }
   }
 
@@ -37,7 +37,7 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public List<Image> retrieveAll() {
-    ArrayList<Image> liste = new ArrayList<Image>();
+    ArrayList<Image> liste = new ArrayList<>();
     images.forEach((id, img) -> {
       liste.add(img);
     });

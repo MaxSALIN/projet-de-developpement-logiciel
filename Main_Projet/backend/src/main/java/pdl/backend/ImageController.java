@@ -7,6 +7,7 @@ import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,11 +46,11 @@ public class ImageController {
         try {
           fileContent = Files.readAllBytes(imgFile.getFile().toPath());
         } catch (final IOException e) {
-          e.printStackTrace();
+          System.err.println(e);
         }
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      System.err.println(e);
     }
     return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
   }
@@ -63,7 +64,7 @@ public class ImageController {
       imgFile.delete();
       database.delete(id);
     } catch (Exception e) {
-      e.printStackTrace();
+      System.err.println(e);
     }
     return ResponseEntity.ok().body(null);
   }
@@ -71,6 +72,12 @@ public class ImageController {
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
+      if (!(file
+        .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
+        && !(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE))) {
+        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
+
+      } else {
         byte[] filecontent = file.getBytes();
         File file2 = new File(
             "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
@@ -80,9 +87,10 @@ public class ImageController {
         try {
           database.create(img);
         } catch (Exception e) {
-          e.printStackTrace();
+          System.err.println(e);
         }
         return ResponseEntity.ok().body(null);
+      }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
@@ -98,7 +106,7 @@ public class ImageController {
         nodes.add(node);
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      System.err.println(e);
     }
 
     return nodes;

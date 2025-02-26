@@ -50,7 +50,7 @@ public class Database implements InitializingBean {
                 });
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println(e);
         }
     }
 
