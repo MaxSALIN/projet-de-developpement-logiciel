@@ -83,7 +83,7 @@ public class ImageController {
       } else {
         byte[] filecontent = file.getBytes();
         File file2 = new File(
-            "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+            "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Main_projet/backend/src/main/resources/images/"
                 + file.getOriginalFilename());
         file.transferTo(file2);
         Image img = new Image(file.getOriginalFilename(), filecontent);
