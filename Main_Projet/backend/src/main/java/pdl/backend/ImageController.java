@@ -82,11 +82,13 @@ public class ImageController {
 
       } else {
         byte[] filecontent = file.getBytes();
+        Long size = file.getSize();
+
         File file2 = new File(
             "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Main_projet/backend/src/main/resources/images/"
                 + file.getOriginalFilename());
         file.transferTo(file2);
-        Image img = new Image(file.getOriginalFilename(), filecontent);
+        Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
         try {
           database.create(img);
         } catch (Exception e) {
@@ -104,10 +106,10 @@ public class ImageController {
       Collection<Image> listAll = database.retrieveAll();
       for (Image img : listAll) {
         ObjectNode node = mapper.createObjectNode();
-        node.put("id", img.getId());
+        node.put("id", database.getId(img.getName()));
         node.put("name", img.getName());
-        // node.put("type", img.getType());
-        // node.put("size", img.getSize());
+        node.put("type", img.getType());
+        node.put("size", img.getSize());
         nodes.add(node);
       }
     } catch (Exception e) {

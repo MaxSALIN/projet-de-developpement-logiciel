@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import ch.qos.logback.core.subst.NodeToStringTransformer;
+
 @Repository
 public class Database implements InitializingBean {
     @Autowired
@@ -76,6 +78,10 @@ public class Database implements InitializingBean {
 
         }
         return finalString;
+    }
+
+    public String getId(final String name){
+        return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE fichier=?", String.class, name);
     }
 
     public Collection<Image> retrieveAll() throws Exception {
