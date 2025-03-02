@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import ch.qos.logback.core.subst.NodeToStringTransformer;
 
 @Repository
 public class Database implements InitializingBean {
@@ -57,7 +56,7 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)", img.getName(), 1/*img.getOrientation() */);
+        return jdbcTemplate.update("INSERT INTO gallery (fichier, ) VALUES (?, ?)", img.getName(), 1/*img.getOrientation() */);
     }
 
     public int delete(final Long id) throws Exception {
