@@ -23,7 +23,7 @@
             "name": "SimilarImages",
             "request": "launch",
             "mainClass": "imageprocessing.SimilarImages",
-            "args": "colorimages/hamac-640x426.jpg hamac-640x426.jpg_test.jpg"
+            "args": "colorimages/mountains.jpg hamac-640x426.jpg_test.jpg"
         },
         {
             "type": "java",

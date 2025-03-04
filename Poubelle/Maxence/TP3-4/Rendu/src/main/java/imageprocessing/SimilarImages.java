@@ -3,13 +3,55 @@ package imageprocessing;
 
 import java.awt.image.BufferedImage;
 
+import boofcv.alg.color.ColorHsv;
+import boofcv.alg.descriptor.UtilFeature;
+import boofcv.alg.feature.color.GHistogramFeatureOps;
+import boofcv.alg.feature.color.Histogram_F64;
 import boofcv.io.image.ConvertBufferedImage;
 import boofcv.io.image.UtilImageIO;
-import boofcv.struct.image.GrayU8;
+import boofcv.struct.image.GrayF32;
 import boofcv.struct.image.Planar;
 
 
 public class SimilarImages {
+
+    public static double[] histogramRGB(Planar<GrayF32> input){   
+        Histogram_F64 histogram = new Histogram_F64(30, 30, 30);
+        histogram.setRange(0, 0, 255);
+		histogram.setRange(1, 0, 255);
+		histogram.setRange(2, 0, 255);
+       
+        GHistogramFeatureOps.histogram(input, histogram);
+        UtilFeature.normalizeL2(histogram);
+
+        return histogram.data;
+    }
+
+    public static double[] histogramHS(Planar<GrayF32> input){   
+        Histogram_F64 histogram = new Histogram_F64(20, 20);
+        histogram.setRange(0, 0, 2.0*Math.PI);
+        histogram.setRange(1, 0, 1.0);
+
+        Planar<GrayF32> image_hsv = new Planar<>(GrayF32.class, input.getWidth(), input.getHeight(), 3);
+        ColorHsv.rgbToHsv(input, image_hsv);
+        Planar<GrayF32> hs = image_hsv.partialSpectrum(0, 1);
+
+        GHistogramFeatureOps.histogram(hs, histogram);
+        UtilFeature.normalizeL2(histogram);
+        return histogram.data;
+    }
+
+    public static double distanceEuclidienne(double[] baseImage, double[] imgToCompare){
+        double dist=0;
+        
+        for(int i=0; i<baseImage.length; i++){
+
+            dist+=(baseImage[i]-imgToCompare[i])*(baseImage[i]-imgToCompare[i]);
+
+        }
+        return Math.sqrt(dist);
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 	//////////////////////						HOG Setup					  //////////////////////
@@ -120,16 +162,16 @@ public class SimilarImages {
 			System.exit(-1);
 		}
 
-        BufferedImage input2 = UtilImageIO.loadImage("colorimages/hamac-640x426.jpg");
-        Planar<GrayU8> image = ConvertBufferedImage.convertFromPlanar(input, null, true, GrayU8.class);
-        Planar<GrayU8> image2 = ConvertBufferedImage.convertFromPlanar(input2, null, true, GrayU8.class);
-        //int test =compareImage(image, image2);
-        //System.out.println(test);
+       BufferedImage input1 = UtilImageIO.loadImage("colorimages/hamac-640x426.jpg");
+        BufferedImage input2 = UtilImageIO.loadImage("colorimages/poppy.jpg");
+        Planar<GrayF32> image1 = ConvertBufferedImage.convertFromPlanar(input1, null, true, GrayF32.class);
+        Planar<GrayF32> image2 = ConvertBufferedImage.convertFromPlanar(input2, null, true, GrayF32.class);
+        double test =distanceEuclidienne(histogramRGB(image1), histogramRGB(image2));
+        System.out.println("Distance =" + test);
         
         
         final String outputPath = args[1];
-        UtilImageIO.saveImage(image, outputPath);
+        UtilImageIO.saveImage(image1, outputPath);
         System.out.println("Image saved in: " + outputPath);
     }
-
 }
