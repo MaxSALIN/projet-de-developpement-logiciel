@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.http.MediaType;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
 
@@ -22,7 +23,7 @@ public class ImageDao implements Dao<Image> {
     byte[] fileContent;
     try {
       fileContent = Files.readAllBytes(imgFile.getFile().toPath());
-      Image img = new Image("logo.jpg", fileContent);
+      Image img = new Image("logo.jpg", fileContent, MediaType.IMAGE_JPEG_VALUE, "190*266");
       images.put(img.getId(), img);
     } catch (final IOException e) {
       System.err.println(e);
