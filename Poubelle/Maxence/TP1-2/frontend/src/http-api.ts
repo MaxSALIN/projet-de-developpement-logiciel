@@ -39,6 +39,7 @@ function concatURL(imageId :any){
 let file = ''
 function handleFileUpload( event:any ){
 	  file = event.target.files[0];
+    
 }
 
 			
@@ -61,6 +62,7 @@ function submitFile(){
       console.log('FAILURE!!');
     });
 }
+
 function saveFile(image : any){
   axios.get('/images/' + image.id, { responseType: "blob" })
         .then(function (response) {
@@ -77,9 +79,6 @@ function saveFile(image : any){
             console.error("Error saving the file:", error);
         });
 }
-
-  
-
 
 
 
