@@ -10,6 +10,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -23,30 +24,44 @@ public class Database implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         jdbcTemplate.execute("DROP TABLE IF EXISTS gallery");
-        jdbcTemplate.execute("DROP TABLE IF EXISTS orientations");
+        //jdbcTemplate.execute("DROP TABLE IF EXISTS orientations");
 
-        this.jdbcTemplate
-                .execute(
-                        "CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
-        this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('portrait')");
-        this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
-        this.jdbcTemplate.execute("SELECT * FROM orientations");
+        //this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
+        //this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('portrait')");
+        //this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
+        //this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, orientation INTEGER NOT NULL REFERENCES orientations(id), data character varying(255))");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, data character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
                     "images/");
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
-                paths.filter(Files::isRegularFile).forEach(path -> {
-                    if (path.getFileName().toString().endsWith(".jpeg")) {
-                        this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
-                                path.getFileName().toString(), 1);
-                    }
-                    if (path.getFileName().toString().endsWith(".png")) {
-                        this.jdbcTemplate.update("INSERT INTO gallery (fichier, orientation) VALUES (?, ?)",
-                                path.getFileName().toString(), 1);
+                paths.filter(Files::isRegularFile).forEach((Path path) -> {
+                    byte[] fileBytes;
+                    try {
+                        fileBytes = Files.readAllBytes(path);
+                        String name = path.toFile().getName();
+                        Long size = path.toFile().length();
+                        if (path.getFileName().toString().endsWith(".jpeg")) {
+                            try {
+                                Image img = new Image(name, fileBytes, MediaType.IMAGE_JPEG_VALUE, size.toString());
+                                create(img);
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+                        }
+                        if (path.getFileName().toString().endsWith(".png")) {
+                            try {
+                                Image img = new Image(name, fileBytes, MediaType.IMAGE_PNG_VALUE, size.toString());
+                                create(img);   
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+                        }
+                    } catch (IOException e) {
+                        System.err.println(e);
                     }
                 });
             }
@@ -56,7 +71,7 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (fichier, ) VALUES (?, ?)", img.getName(), 1/*img.getOrientation() */);
+        return jdbcTemplate.update("INSERT INTO gallery (fichier) VALUES (?)", img.getName());
     }
 
     public int delete(final Long id) throws Exception {
@@ -74,7 +89,6 @@ public class Database implements InitializingBean {
         } else {
             finalString = jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class,
                     (id + 1));
-
         }
         return finalString;
     }
