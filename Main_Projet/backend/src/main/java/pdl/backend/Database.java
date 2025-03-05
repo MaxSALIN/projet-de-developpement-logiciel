@@ -24,12 +24,12 @@ public class Database implements InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         jdbcTemplate.execute("DROP TABLE IF EXISTS gallery");
-        //jdbcTemplate.execute("DROP TABLE IF EXISTS orientations");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS orientations");
 
-        //this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
-        //this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('portrait')");
-        //this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
-        //this.jdbcTemplate.execute("SELECT * FROM orientations");
+        this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
+        this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('portrait')");
+        this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
+        this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, data character varying(255))");
         try {
