@@ -17,14 +17,6 @@ public class Image {
     return name;
   }
 
-  public String getType() {
-    return type;
-  }
-
-  public String getSize() {
-    return size;
-  }
-
   public void setName(final String name) {
     this.name = name;
   }
