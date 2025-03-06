@@ -1,10 +1,11 @@
 package pdl.backend;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,51 +42,42 @@ public class ImageController {
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException{
-    var imgFile = imageDao.retrieve(id).get();
-    byte [] bytes = imgFile.getData();
-    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
+    try {
+      var imgFile = imageDao.retrieve(id).get();
+      byte[] bytes = imgFile.getData();
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(bytes);
+    } catch (Exception e) {
+      System.out.println("Error : " + e + ". Image not found");
+    }
+    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
-    var imgFile = imageDao.retrieve(id).get();
-    imageDao.delete(imgFile);
-    return ResponseEntity.ok().body(null);
+    imageDao.delete(imageDao.retrieve(id).get());
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(null);
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.POST)
-  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
-      RedirectAttributes redirectAttributes) throws IOException {
-          if(file.getContentType()==MediaType.APPLICATION_PDF_VALUE){
-            return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
-            
-          }
-          else{
-            byte [] data = file.getBytes();
-            Image imgFile = new Image(file.getName(), data);
-            imageDao.create(imgFile);
-            return ResponseEntity.ok().body(null);
-          }
-          
-        
-        
+  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file) throws IOException {
+    Image I = new Image(file.getOriginalFilename(), file.getBytes());
+    imageDao.create(I);
+    return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(null);
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
-  public ArrayNode getImageList() throws IOException {
+  public ArrayNode getImageList() {
     ArrayNode nodes = mapper.createArrayNode();
     List<Image> l = imageDao.retrieveAll();
-    for (Image image : l) {
+    for (int i = 0; i < l.size(); i++) {
       ObjectNode node = mapper.createObjectNode();
-      node.put("name", image.getName());
-      node.put("id", image.getId());
+      Image Im = l.get(i);
+      node.put("name", Im.getName());
+      node.put("id", Im.getId());
       nodes.add(node);
     }
-    
-    
-
     return nodes;
   }
 

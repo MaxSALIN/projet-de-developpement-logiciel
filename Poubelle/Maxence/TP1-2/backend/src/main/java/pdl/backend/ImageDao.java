@@ -31,17 +31,19 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public Optional<Image> retrieve(final long id) {
-    Image img = images.get(id);
-    return Optional.of(img);
+    if (images.containsKey(id)) {
+      return Optional.of(images.get(id));
+    }
+    return Optional.empty();
   }
 
   @Override
   public List<Image> retrieveAll() {
-    ArrayList<Image> liste = new ArrayList<Image>();
-    images.forEach((id, img) ->{
-      liste.add(img);
-    });
-    return liste;
+    List<Image> to_retrieve = new ArrayList<>();
+    for (Map.Entry i : images.entrySet()) {
+      to_retrieve.add(images.get(i.getKey()));
+    }
+    return to_retrieve;
   }
 
   @Override
@@ -56,6 +58,8 @@ public class ImageDao implements Dao<Image> {
 
   @Override
   public void delete(final Image img) {
-    images.remove(img.getId());
+    if (images.containsKey(img.getId())) {
+      images.remove(img.getId());
+    }
   }
 }
