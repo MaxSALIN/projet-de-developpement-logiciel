@@ -1,7 +1,9 @@
 package pdl.backend;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,23 +32,23 @@ public class ImageController {
   private final Database database;
 
   @Autowired
-  public ImageController(Database database){
-    this.database= database;
+  public ImageController(Database database) {
+    this.database = database;
   }
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
     try {
-      String img = database.retrieve(id);
-      final ClassPathResource imgFile = new ClassPathResource(img);
-      
-      try {
-        fileContent = Files.readAllBytes(imgFile.getFile().toPath());
-      } catch (final IOException e) {
-        e.printStackTrace();
+      String img = "images/" + database.retrieve(id);
+      if (img != "") {
+        final ClassPathResource imgFile = new ClassPathResource(img);
+        try {
+          fileContent = Files.readAllBytes(imgFile.getFile().toPath());
+        } catch (final IOException e) {
+          e.printStackTrace();
+        }
       }
-
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -59,6 +61,10 @@ public class ImageController {
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
+      File imgFile = new File(
+          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+              + database.retrieve(id));
+      imgFile.delete();
       database.delete(id);
     } catch (Exception e) {
       e.printStackTrace();
@@ -70,9 +76,13 @@ public class ImageController {
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
     byte[] filecontent = file.getBytes();
-    Image img = new Image(file.getName(), filecontent); // curl -X POST -F
-                                                        // "file=@/autofs/unitytravail/travail/clemsimon/L3/s6/projet/backend/src/main/resources/arbre.jpeg"
-                                                        // "http://localhost:8181/images"
+    File file2 = new File(
+        "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+            + file.getOriginalFilename());
+    file.transferTo(file2);
+    Image img = new Image(file.getOriginalFilename(), filecontent); // curl -X POST -F
+    // "file=@/autofs/unitytravail/travail/clemsimon/L3/s6/projet/backend/src/main/resources/arbre.jpeg"
+    // "http://localhost:8181/images"
     try {
       database.create(img);
     } catch (Exception e) {

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { images, downloadImage, handleFileUpload, submitFile}  from '../http-api'
+import { images, downloadImage, handleFileUpload, submitFile, saveFile}  from '../http-api'
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 const titleClass = ref('title') 
 const namesClass = ref('names')
+const buttonImage = ref('buttonCenterImage') 
 
 </script>
 
@@ -17,23 +18,27 @@ const namesClass = ref('names')
   <p> Voici un bouton pour vous amuser</p>
     <button type="button" @click="count++">Le compte est de : {{ count }}</button>
   </div>
-  <p>
+  <p :class="buttonImage">
     <select>
       <option v-for="image in images" @click=downloadImage(image)> {{ image.name }}</option>
+
     </select>
+    <img id="image" src=""> 
+    
   </p>
   
 
 
 	<div class="container">
 		<div>
+      <hr/>
 			<h1 :class="titleClass">Déposez votre image ici</h1>
-			<hr/>
 			<label>File
 				<input type="file" @change="handleFileUpload( $event )"/>
 			</label>
 			<br>
 			<button v-on:click="submitFile()">Submit</button>
+      <hr/>
 		</div>
 	</div>
 
@@ -49,5 +54,12 @@ const namesClass = ref('names')
 }
 .names {
   color:gold;
+}
+
+.buttonCenterImage{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
 }
 </style>

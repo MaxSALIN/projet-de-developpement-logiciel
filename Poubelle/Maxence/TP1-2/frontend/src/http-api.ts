@@ -64,6 +64,7 @@ function concatURL(imageId :any){
 let file = ''
 function handleFileUpload( event:any ){
 	  file = event.target.files[0];
+    
 }
 
 			
@@ -87,9 +88,23 @@ function submitFile(){
     });
 }
 
-  
+function saveFile(image : any){
+  axios.get('/images/' + image.id, { responseType: "blob" })
+        .then(function (response) {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = image.name
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        })
+        .catch(function (error) {
+            console.error("Error saving the file:", error);
+        });
+}
 
 
 
-
-export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile}
+export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile}

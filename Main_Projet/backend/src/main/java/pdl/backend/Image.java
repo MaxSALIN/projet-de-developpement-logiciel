@@ -1,19 +1,16 @@
 package pdl.backend;
 
 public class Image {
-  private static Long count = Long.valueOf(0);
-  private Long id;
   private String name;
-  private byte[] data;
+  private final String type;
+  private final String size;
+  private final byte[] data;
 
-  public Image(final String name, final byte[] data) {
-    id = count++;
+  public Image(final String name, final byte[] data, final String type, final String size){
     this.name = name;
     this.data = data;
-  }
-
-  public long getId() {
-    return id;
+    this.type = type;
+    this.size = size;
   }
 
   public String getName() {
@@ -22,6 +19,14 @@ public class Image {
 
   public void setName(final String name) {
     this.name = name;
+  }
+
+  public String getType(){
+    return type;
+  }
+
+  public String getSize(){
+    return size;
   }
 
   public byte[] getData() {
