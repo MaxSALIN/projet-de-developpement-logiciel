@@ -2,9 +2,13 @@ package pdl.backend;
 
 public class Image {
   private String name;
-  private final String type;
-  private final String size;
-  private final byte[] data;
+  private String type;
+  private String size;
+  private byte[] data;
+
+  public Image(){
+
+  }
 
   public Image(final String name, final byte[] data, final String type, final String size){
     this.name = name;
@@ -24,12 +28,24 @@ public class Image {
   public String getType(){
     return type;
   }
+  public void setType(final String type) {
+    this.type = type;
+  }
+
 
   public String getSize(){
     return size;
   }
+  public void setSize(final String size) {
+    this.size = size;
+  }
+
 
   public byte[] getData() {
     return data;
   }
+  public void setData(final byte[] data) {
+    this.data = data;
+  }
+
 }
