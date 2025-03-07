@@ -1,12 +1,15 @@
 package pdl.backend;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Repository;
@@ -17,16 +20,41 @@ public class ImageDao implements Dao<Image> {
   private final Map<Long, Image> images = new HashMap<>();
 
   public ImageDao() {
-    // placez une image test.jpg dans le dossier "src/main/resources" du projet
-    final ClassPathResource imgFile = new ClassPathResource("test.jpg");
-    byte[] fileContent;
-    try {
-      fileContent = Files.readAllBytes(imgFile.getFile().toPath());
-      Image img = new Image("logo.jpg", fileContent);
-      images.put(img.getId(), img);
-    } catch (final IOException e) {
-      e.printStackTrace();
-    }
+            try {
+            ClassPathResource directoryResource = new ClassPathResource(
+                    "images/");
+            File folder = directoryResource.getFile();
+            Path folderPath = folder.toPath();
+            try (Stream<Path> paths = Files.walk(folderPath, 1)) {
+                paths.filter(Files::isRegularFile).forEach((Path path) -> {
+                    byte[] fileBytes;
+                    try {
+                        fileBytes = Files.readAllBytes(path);
+                        String name = path.toFile().getName();
+                        if (path.getFileName().toString().endsWith(".jpeg")) {
+                            try {
+                                Image img = new Image(name, fileBytes);
+                                create(img);
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+                        }
+                        if (path.getFileName().toString().endsWith(".png")) {
+                            try {
+                                Image img = new Image(name, fileBytes);
+                                create(img);   
+                            } catch (Exception e) {
+                                System.err.println(e);
+                            }
+                        }
+                    } catch (IOException e) {
+                        System.err.println(e);
+                    }
+                });
+            }
+        } catch (IOException e) {
+            System.err.println(e);
+        }
   }
 
   @Override
