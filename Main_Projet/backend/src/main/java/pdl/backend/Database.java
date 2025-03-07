@@ -31,7 +31,7 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255))");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255), similarity character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
                     "/images", Database.class);
