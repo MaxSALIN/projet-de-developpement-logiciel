@@ -3,6 +3,8 @@ package pdl.backend;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,7 +85,7 @@ public class ImageController {
       } else {
         byte[] filecontent = file.getBytes();
         Long size = file.getSize();
-
+        Path newFilePath = Paths.get("resources/images");
         File file2 = new File(
             "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/l3c/Main_projet/backend/src/main/resources/images/"
                 + file.getOriginalFilename());
