@@ -6,8 +6,10 @@ const images = ref();
 function getImages() {
   return axios.get('/images').then(function (response) {
     console.log(response);
+
     images.value = response.data;
-  });
+    console.log(images.value);
+  })
 }
 
 

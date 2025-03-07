@@ -41,6 +41,7 @@ public class ImageController {
     byte[] fileContent = new byte[] {};
     try {
       String img = "images/" + database.retrieve(id);
+      System.out.println(img);
       if (!img.equals("")) {
         final ClassPathResource imgFile = new ClassPathResource(img);
         try {
@@ -61,7 +62,7 @@ public class ImageController {
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
       File imgFile = new File(
-          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+          "images/"
               + database.retrieve(id));
       imgFile.delete();
       database.delete(id);
@@ -85,7 +86,7 @@ public class ImageController {
       Long size = file.getSize();
 
       File file2 = new File(
-          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/l3c/Main_projet/backend/src/main/resources/images/"
+          "images/"
               + file.getOriginalFilename());
       file.transferTo(file2);
       Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
