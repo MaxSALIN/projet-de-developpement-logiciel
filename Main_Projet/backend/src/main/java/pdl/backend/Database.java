@@ -35,7 +35,6 @@ public class Database implements InitializingBean {
         try {
             ClassPathResource directoryResource = new ClassPathResource(
                     "../../images", Database.class);
-                    System.out.println("FONCTIONNE");
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
@@ -49,6 +48,8 @@ public class Database implements InitializingBean {
                             try {
                                 Image img = new Image(name, fileBytes, MediaType.IMAGE_JPEG_VALUE, size.toString());
                                 create(img);
+                                System.out.println("FONCTIONNE");
+
                             } catch (Exception e) {
                                 System.err.println(e);
                             }
