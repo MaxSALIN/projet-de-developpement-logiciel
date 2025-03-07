@@ -12,6 +12,12 @@ function getImages() {
   })
 }
 
+const ok = ref(0);
+
+const imageID = ref()
+const imageSize = ref()
+const imageType = ref()
+const imageName = ref()
 
 function downloadImage(image: any) {
   axios.get('/images/' + image.id, { responseType: "blob" })
@@ -28,6 +34,11 @@ function downloadImage(image: any) {
 
         } else {
           imageEl.setAttribute("src", imageDataUrl);
+          imageID.value = image.id;
+          imageSize.value = image.size + " octets";
+          imageType.value = image.type; // essayer de mieux presenter ?
+          imageName.value = image.name; // de meme ?
+          ok.value = 1;
         }
       }
     });
@@ -84,4 +95,4 @@ function saveFile(image: any) {
 
 
 
-export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile }
+export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName }

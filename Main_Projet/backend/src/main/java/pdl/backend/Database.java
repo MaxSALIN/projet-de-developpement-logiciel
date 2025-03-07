@@ -31,7 +31,7 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, data bytea, type character varying(255), size character varying(255))");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
                     "/images", Database.class);
@@ -47,7 +47,7 @@ public class Database implements InitializingBean {
                         if (path.getFileName().toString().endsWith(".jpeg")
                                 || path.getFileName().toString().endsWith("jpg")) {
                             try {
-                                Image img = new Image(name, fileBytes, MediaType.IMAGE_JPEG_VALUE, size.toString());
+                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, size.toString());
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -55,7 +55,7 @@ public class Database implements InitializingBean {
                         }
                         if (path.getFileName().toString().endsWith(".png")) {
                             try {
-                                Image img = new Image(name, fileBytes, MediaType.IMAGE_PNG_VALUE, size.toString());
+                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, size.toString());
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -72,8 +72,8 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (name, type, size, data) VALUES (?, ?, ?,?)", img.getName(),
-                img.getType(), img.getSize(), img.getData());
+        return jdbcTemplate.update("INSERT INTO gallery (name, type, size) VALUES ( ?, ?,?)", img.getName(),
+                img.getType(), img.getSize());
     }
 
     public int delete(final Long id) throws Exception {
@@ -96,7 +96,7 @@ public class Database implements InitializingBean {
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT name, type, size, data FROM gallery",
+        return jdbcTemplate.query("SELECT name, type, size FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));
     }
 }

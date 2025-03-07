@@ -41,7 +41,6 @@ public class ImageController {
     byte[] fileContent = new byte[] {};
     try {
       String img = "images/" + database.retrieve(id);
-      System.out.println(img);
       if (!img.equals("")) {
         final ClassPathResource imgFile = new ClassPathResource(img);
         try {
@@ -89,7 +88,7 @@ public class ImageController {
           "images/"
               + file.getOriginalFilename());
       file.transferTo(file2);
-      Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
+      Image img = new Image(file.getOriginalFilename(), file.getContentType(), size.toString());
       try {
         database.create(img);
       } catch (Exception e) {
