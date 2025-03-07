@@ -44,8 +44,7 @@ public class Database implements InitializingBean {
                         fileBytes = Files.readAllBytes(path);
                         String name = path.toFile().getName();
                         Long size = path.toFile().length();
-                        if (path.getFileName().toString().endsWith(".jpeg")) {
-                            System.out.println("FONCTIONNE");
+                        if (path.getFileName().toString().endsWith(".jpeg") || path.getFileName().toString().endsWith("jpg")) {
                             try {
                                 Image img = new Image(name, fileBytes, MediaType.IMAGE_JPEG_VALUE, size.toString());
                                 create(img);
