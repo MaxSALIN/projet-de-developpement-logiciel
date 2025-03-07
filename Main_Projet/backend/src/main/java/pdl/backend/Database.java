@@ -34,7 +34,7 @@ public class Database implements InitializingBean {
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, data character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
-                    "images/");
+                    "../../images", Database.class);
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
@@ -84,12 +84,8 @@ public class Database implements InitializingBean {
 
     public String retrieve(final long id) throws Exception {
         String finalString;
-        if (id > jdbcTemplate.queryForObject("SELECT MAX(id) FROM gallery", Long.class)) {
-            finalString = "";
-        } else {
             finalString = jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class,
                     (id + 1));
-        }
         return finalString;
     }
 
