@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { images, downloadImage, handleFileUpload, submitFile, saveFile}  from '../http-api'
+import { images, downloadImage, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName}  from '../http-api'
 
 defineProps<{ msg: string }>()
 
@@ -8,6 +8,7 @@ const count = ref(0)
 const titleClass = ref('title') 
 const namesClass = ref('names')
 const buttonImage = ref('buttonCenterImage') 
+
 
 </script>
 
@@ -23,7 +24,16 @@ const buttonImage = ref('buttonCenterImage')
       <option v-for="image in images" @click=downloadImage(image)> {{ image.name }}</option>
 
     </select>
-    <img id="image" src=""> 
+    <div v-if="ok">  
+      <p> Name : {{ imageName }}</p>
+          </div>
+      <img id="image" src="">  
+          <div v-if="ok">  
+        <p> ID:  {{ imageID }}</p>
+        <p> Size: {{ imageSize }}</p>
+        <p> Type: {{ imageType }}</p>
+    </div>
+
     
   </p>
   

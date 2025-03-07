@@ -15,7 +15,6 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 public class Database implements InitializingBean {
     @Autowired
@@ -26,15 +25,17 @@ public class Database implements InitializingBean {
         jdbcTemplate.execute("DROP TABLE IF EXISTS gallery");
         jdbcTemplate.execute("DROP TABLE IF EXISTS orientations");
 
-        this.jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
+        this.jdbcTemplate.execute(
+                "CREATE TABLE IF NOT EXISTS orientations (id bigserial PRIMARY KEY, name character varying(50))");
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('portrait')");
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, data character varying(255))");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255), similarity character varying(255))");
+                // may need to upgrade the varying size of similarity 
         try {
             ClassPathResource directoryResource = new ClassPathResource(
-                    "../../images", Database.class);
+                    "/images", Database.class);
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
@@ -44,9 +45,10 @@ public class Database implements InitializingBean {
                         fileBytes = Files.readAllBytes(path);
                         String name = path.toFile().getName();
                         Long size = path.toFile().length();
-                        if (path.getFileName().toString().endsWith(".jpeg") || path.getFileName().toString().endsWith("jpg")) {
+                        if (path.getFileName().toString().endsWith(".jpeg")
+                                || path.getFileName().toString().endsWith("jpg")) {
                             try {
-                                Image img = new Image(name, fileBytes, MediaType.IMAGE_JPEG_VALUE, size.toString());
+                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, size.toString());
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -54,8 +56,8 @@ public class Database implements InitializingBean {
                         }
                         if (path.getFileName().toString().endsWith(".png")) {
                             try {
-                                Image img = new Image(name, fileBytes, MediaType.IMAGE_PNG_VALUE, size.toString());
-                                create(img);   
+                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, size.toString());
+                                create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
                             }
@@ -71,7 +73,8 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (fichier) VALUES (?)", img.getName());
+        return jdbcTemplate.update("INSERT INTO gallery (name, type, size) VALUES ( ?, ?,?)", img.getName(),
+                img.getType(), img.getSize());
     }
 
     public int delete(final Long id) throws Exception {
@@ -84,16 +87,17 @@ public class Database implements InitializingBean {
 
     public String retrieve(final long id) throws Exception {
         String finalString;
-            finalString = jdbcTemplate.queryForObject("SELECT fichier FROM gallery WHERE id = ?", String.class,
-                    (id + 1));
+        finalString = jdbcTemplate.queryForObject("SELECT name FROM gallery WHERE id = ?", String.class,
+                (id));
         return finalString;
     }
 
-    public String getId(final String name){
-        return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE fichier=?", String.class, name);
+    public String getId(final String name) {
+        return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE name=?", String.class, name);
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT id, data FROM gallery", new BeanPropertyRowMapper<>(Image.class));
+        return jdbcTemplate.query("SELECT name, type, size FROM gallery",
+                new BeanPropertyRowMapper<>(Image.class));
     }
 }
