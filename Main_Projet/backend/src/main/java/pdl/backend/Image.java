@@ -6,7 +6,7 @@ public class Image {
   private final String size;
   private final byte[] data;
 
-  public Image(final String name, final byte[] data, final String type, final String size){
+  public Image(final String name, final byte[] data, final String type, final String size) {
     this.name = name;
     this.data = data;
     this.type = type;
@@ -21,11 +21,11 @@ public class Image {
     this.name = name;
   }
 
-  public String getType(){
+  public String getType() {
     return type;
   }
 
-  public String getSize(){
+  public String getSize() {
     return size;
   }
 

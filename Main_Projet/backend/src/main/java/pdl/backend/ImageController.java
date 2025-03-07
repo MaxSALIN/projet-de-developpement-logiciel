@@ -75,27 +75,27 @@ public class ImageController {
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
-      if (!(file
+    if (!(file
         .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
         && !(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE))) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
+      return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
 
-      } else {
-        byte[] filecontent = file.getBytes();
-        Long size = file.getSize();
+    } else {
+      byte[] filecontent = file.getBytes();
+      Long size = file.getSize();
 
-        File file2 = new File(
-            "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/l3c/Main_projet/backend/src/main/resources/images/"
-                + file.getOriginalFilename());
-        file.transferTo(file2);
-        Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
-        try {
-          database.create(img);
-        } catch (Exception e) {
-          System.err.println(e);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+      File file2 = new File(
+          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/l3c/Main_projet/backend/src/main/resources/images/"
+              + file.getOriginalFilename());
+      file.transferTo(file2);
+      Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
+      try {
+        database.create(img);
+      } catch (Exception e) {
+        System.err.println(e);
       }
+      return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
