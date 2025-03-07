@@ -34,7 +34,7 @@ public class Database implements InitializingBean {
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, fichier character varying(255) NOT NULL, data character varying(255))");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
-                    "../../images", Database.class);
+                    "../../../images", Database.class);
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
