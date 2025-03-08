@@ -77,7 +77,7 @@ public class Database implements InitializingBean {
     }
 
     public int delete(final Long id) throws Exception {
-        return jdbcTemplate.update("DELETE FROM gallery WHERE id=?", id + 1);
+        return jdbcTemplate.update("DELETE FROM gallery WHERE id=?", id);
     }
 
     public void update(final Image img, final String[] params) throws Exception {

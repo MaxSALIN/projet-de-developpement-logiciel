@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
+import java.nio.file.*;
 import java.util.Collection;
 
 import javax.imageio.ImageIO;
@@ -44,11 +44,10 @@ public class ImageController {
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
     try {
-      String img = "images/" + database.retrieve(id);
-      if (!img.equals("")) {
-        final ClassPathResource imgFile = new ClassPathResource(img);
+      if (!database.retrieve(id).equals("")) {
+        Path pathFile = Paths.get("src/main/resources/images/" + database.retrieve(id));
         try {
-          fileContent = Files.readAllBytes(imgFile.getFile().toPath());
+          fileContent = Files.readAllBytes(pathFile);
         } catch (final IOException e) {
           System.err.println(e);
           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -64,10 +63,8 @@ public class ImageController {
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
-      File imgFile = new File(
-          "images/"
-              + database.retrieve(id));
-      imgFile.delete();
+      Path pathFile = Paths.get("src/main/resources/images/" + database.retrieve(id));
+      Files.delete(pathFile);
       database.delete(id);
     } catch (Exception e) {
       System.err.println(e);
@@ -89,22 +86,20 @@ public class ImageController {
       Long size = file.getSize();
       InputStream imageInputStream = file.getInputStream();
       String dimensions = "";
-      try
-      {    
+      try {
         BufferedImage image = ImageIO.read(imageInputStream);
-        int w = image.getWidth ();
-        int h = image.getHeight ();
+        int w = image.getWidth();
+        int h = image.getHeight();
         dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
-      }
-      catch ( IOException ioe )
-      {
-        System.out.println ( ioe );
+      } catch (IOException ioe) {
+        System.out.println(ioe);
       }
 
-      File file2 = new File(
-          "images/"
+      Path pathFile2 = Paths.get(
+          "src/main/resources/images/"
               + file.getOriginalFilename());
-      file.transferTo(file2);
+      Files.createFile(pathFile2);
+      file.transferTo(pathFile2);
       Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions);
       try {
         database.create(img);
