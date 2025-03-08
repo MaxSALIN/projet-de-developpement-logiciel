@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getImages, images, concatURL, saveFile }  from '../http-api'
+import { getImages, images, concatURL, saveFile, deleteImage }  from '../http-api'
 
 
 defineProps<{ msg: string }>()
@@ -17,6 +17,7 @@ getImages();
   <div id="divImg" v-for="image in images" :class="buttonImage">
     <img id="img" :src="concatURL(image.id)" >
     <button type="button" @click="saveFile(image)"> Save File On Disk</button>
+    <button type="button" @click="deleteImage(image.id)">Delete</button>
   </div>
   
 </template>

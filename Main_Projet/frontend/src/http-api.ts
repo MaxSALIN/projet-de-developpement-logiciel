@@ -44,6 +44,16 @@ function downloadImage(image: any) {
     });
 }
 
+function deleteImage(id: number) {
+  axios.delete('/images/' + id,
+    {
+      headers: {
+        Authorization: 'authorizationToken'
+      }
+    }
+  );
+}
+
 function concatURL(imageId: any) {
   return "/images/".concat(imageId)
 }
@@ -95,4 +105,4 @@ function saveFile(image: any) {
 
 
 
-export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName }
+export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }
