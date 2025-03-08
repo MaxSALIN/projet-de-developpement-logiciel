@@ -1,9 +1,13 @@
 package pdl.backend;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Collection;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -83,12 +87,25 @@ public class ImageController {
     } else {
       byte[] filecontent = file.getBytes();
       Long size = file.getSize();
+      InputStream imageInputStream = file.getInputStream();
+      String dimensions = "";
+      try
+      {    
+        BufferedImage image = ImageIO.read(imageInputStream);
+        int w = image.getWidth ();
+        int h = image.getHeight ();
+        dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
+      }
+      catch ( IOException ioe )
+      {
+        System.out.println ( ioe );
+      }
 
       File file2 = new File(
           "images/"
               + file.getOriginalFilename());
       file.transferTo(file2);
-      Image img = new Image(file.getOriginalFilename(), file.getContentType(), size.toString());
+      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions);
       try {
         database.create(img);
       } catch (Exception e) {
