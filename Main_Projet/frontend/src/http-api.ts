@@ -54,6 +54,10 @@ function deleteImage(id: number) {
   ).then(
     function (response) {
       getImages();
+      ok.value = 0;
+      var imageEl = document.getElementById("image");
+      imageEl?.setAttribute("src", "");
+
     }
   );
 }

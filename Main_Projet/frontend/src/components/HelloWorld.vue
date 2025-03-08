@@ -21,6 +21,7 @@ const buttonImage = ref('buttonCenterImage')
   </div>
   <p :class="buttonImage">
     <select>
+      <option>Choose an image</option>
       <option v-for="image in images" @click=downloadImage(image)> {{ image.name }}</option>
 
     </select>

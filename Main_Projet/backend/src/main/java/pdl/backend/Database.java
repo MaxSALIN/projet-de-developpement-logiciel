@@ -2,10 +2,15 @@ package pdl.backend;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.stream.Stream;
+import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,11 +48,20 @@ public class Database implements InitializingBean {
                     try {
                         fileBytes = Files.readAllBytes(path);
                         String name = path.toFile().getName();
-                        Long size = path.toFile().length();
+                        InputStream pathInputStream = new FileInputStream(path.toFile());
+                        String dimensions = "";
+                        try {
+                            BufferedImage image = ImageIO.read(pathInputStream);
+                            int w = image.getWidth();
+                            int h = image.getHeight();
+                            dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
+                        } catch (IOException ioe) {
+                            System.out.println(ioe);
+                        }
                         if (path.getFileName().toString().endsWith(".jpeg")
                                 || path.getFileName().toString().endsWith("jpg")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, size.toString());
+                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, dimensions);
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -55,7 +69,7 @@ public class Database implements InitializingBean {
                         }
                         if (path.getFileName().toString().endsWith(".png")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, size.toString());
+                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, dimensions);
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
