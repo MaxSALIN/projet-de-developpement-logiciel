@@ -51,6 +51,10 @@ function deleteImage(id: number) {
         Authorization: 'authorizationToken'
       }
     }
+  ).then(
+    function (response) {
+      getImages();
+    }
   );
 }
 
@@ -80,6 +84,7 @@ function submitFile() {
     }
   ).then(function () {
     console.log('SUCCESS!!');
+    getImages();
   })
     .catch(function () {
       console.log('FAILURE!!');
