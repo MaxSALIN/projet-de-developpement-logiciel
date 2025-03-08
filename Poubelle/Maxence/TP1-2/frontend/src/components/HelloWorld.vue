@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { images, downloadImage, handleFileUpload, submitFile, saveFile}  from '../http-api'
+import { images, downloadImage, handleFileUpload, submitFile }  from '../http-api'
 
 defineProps<{ msg: string }>()
 

@@ -1,9 +1,16 @@
 package pdl.backend;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -36,6 +43,36 @@ public class ImageController {
     this.database = database;
   }
 
+  @RequestMapping(value = "/images/{id}/similar?number={N}&descriptor={DESCR}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  public ArrayNode getSimilarImages(@PathVariable("id") long id, @PathVariable("N") long N, @PathVariable("DESCR") String descr) throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    List<Double> scores = new ArrayList<>();
+    
+    try {
+      Collection<Image> listAll = database.retrieveAll();
+      String imgBase= "images/"+database.retrieve(id);
+      for (Image img : listAll) {
+        if("RGB".equals(descr)){  
+          scores.add(SimilarImages.distanceEuclidienne(SimilarImages.histogramRGB(imgBase), SimilarImages.histogramRGB("images/"+img.getName())));
+        }
+        
+       
+      }
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+    Collections.sort(scores);
+    for (int i = 1; i <= N; i++) {
+      ObjectNode node = mapper.createObjectNode();
+      node.put("id", database.getId(scores.get.getName()));
+      node.put("name", img.getName());
+      node.put("type", img.getType());
+      node.put("size", img.getSize());
+      nodes.add(node);
+    }
+    return nodes;
+  }
+
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
@@ -61,7 +98,7 @@ public class ImageController {
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
       File imgFile = new File(
-          "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Poubelle/Clement/backend/src/main/resources/images/"
+          "images/"
               + database.retrieve(id));
       imgFile.delete();
       database.delete(id);
@@ -75,27 +112,40 @@ public class ImageController {
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
-      if (!(file
+    if (!(file
         .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
         && !(file.getContentType().equals(MediaType.IMAGE_PNG_VALUE))) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
+      return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
 
-      } else {
-        byte[] filecontent = file.getBytes();
-        Long size = file.getSize();
-
-        File file2 = new File(
-            "/autofs/unitytravail/travail/clemsimon/L3/s6/projetWeb/l3c/Main_projet/backend/src/main/resources/images/"
-                + file.getOriginalFilename());
-        file.transferTo(file2);
-        Image img = new Image(file.getOriginalFilename(), filecontent, file.getContentType(), size.toString());
-        try {
-          database.create(img);
-        } catch (Exception e) {
-          System.err.println(e);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    } else {
+      byte[] filecontent = file.getBytes();
+      Long size = file.getSize();
+      InputStream imageInputStream = file.getInputStream();
+      String dimensions = "";
+      try
+      {    
+        BufferedImage image = ImageIO.read(imageInputStream);
+        int w = image.getWidth ();
+        int h = image.getHeight ();
+        dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
       }
+      catch ( IOException ioe )
+      {
+        System.out.println ( ioe );
+      }
+
+      File file2 = new File(
+          "images/"
+              + file.getOriginalFilename());
+      file.transferTo(file2);
+      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions);
+      try {
+        database.create(img);
+      } catch (Exception e) {
+        System.err.println(e);
+      }
+      return ResponseEntity.status(HttpStatus.CREATED).body(null);
+    }
   }
 
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
