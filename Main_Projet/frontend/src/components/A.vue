@@ -38,8 +38,8 @@ getImages();
 }
 
 #img {
-  width: fit-content;
-  height: 15em;
+  width: 18em;
+  height: fit-content;
   will-change: filter;
   transition: filter 300ms;
 }

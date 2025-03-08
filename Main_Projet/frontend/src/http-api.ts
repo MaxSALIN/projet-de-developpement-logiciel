@@ -45,7 +45,7 @@ function downloadImage(image: any) {
 }
 
 function deleteImage(id: number) {
-  axios.delete('/images/' + id,
+  axios.delete('/images/' + (id),
     {
       headers: {
         Authorization: 'authorizationToken'
