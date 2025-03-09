@@ -6,7 +6,8 @@ import A from './components/A.vue'
 <template>
   <HelloWorld msg="Projet de développement Logiciel"/>
   <Submit msg="Postez vos images ici"/>
-  <A msg="Bienvenue dans la galerie" />
+  <A msg="Bienvue dans la gallerie" />
+  <RouterView></RouterView>
 </template>
 
 <style scoped>

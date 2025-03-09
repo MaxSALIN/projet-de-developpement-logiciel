@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { watch, ref } from 'vue'
 import { images, downloadImage, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName }  from '../http-api'
-import { useRoute } from 'vue-router'
 
 
-const path = "/images/" + useRoute().params.id
 </script>
 
 <template>
-  <router-link to="/">Back Home</router-link>
-  <div>
+  Back Home
       <p> Name : {{ imageName }}</p>
-      <img id="image" src=path>  
+      <img id="image" src="/images/"+$route.params.id>  
         <p> ID:  {{ imageID }}</p>
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
@@ -29,6 +26,4 @@ const path = "/images/" + useRoute().params.id
 
           <input type="submit" value="More images!"/>
         </form>
-        <router-view></router-view>
-        </div>
 </template>
