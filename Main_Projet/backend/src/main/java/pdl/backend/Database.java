@@ -61,7 +61,9 @@ public class Database implements InitializingBean {
                         if (path.getFileName().toString().endsWith(".jpeg")
                                 || path.getFileName().toString().endsWith("jpg")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, dimensions, SimilarImages.histogramRGB(path.toFile().toString()), SimilarImages.histogramHS(path.toFile().toString()));
+                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, dimensions,
+                                        SimilarImages.histogramRGB(path.toFile().toString()),
+                                        SimilarImages.histogramHS(path.toFile().toString()));
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -69,7 +71,9 @@ public class Database implements InitializingBean {
                         }
                         if (path.getFileName().toString().endsWith(".png")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, dimensions, SimilarImages.histogramRGB(path.toFile().toString()), SimilarImages.histogramHS(path.toFile().toString()));
+                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, dimensions,
+                                        SimilarImages.histogramRGB(path.toFile().toString()),
+                                        SimilarImages.histogramHS(path.toFile().toString()));
                                 create(img);
                             } catch (Exception e) {
                                 System.err.println(e);
@@ -86,7 +90,8 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)", img.getName(),
+        return jdbcTemplate.update("INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)",
+                img.getName(),
                 img.getType(), img.getSize(), img.getDescr_RGB(), img.getDescr_HS());
     }
 
@@ -110,20 +115,20 @@ public class Database implements InitializingBean {
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT name, type, size FROM gallery",
+        return jdbcTemplate.query("SELECT name, type, size, descr_RGB, descr_HS FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));
     }
 
     public double distanceRGB(final String name1, final String name2) throws Exception {
         String finalString = """
-            SELECT (g1.descr_RGB <-> g2.descr_RGB) 
-            FROM gallery g1, gallery g2 
-            WHERE g1.name = ? AND g2.name = ?
-        """;
+                    SELECT (g1.descr_RGB <-> g2.descr_RGB)
+                    FROM gallery g1, gallery g2
+                    WHERE g1.name = ? AND g2.name = ?
+                """;
 
         Double distance = jdbcTemplate.queryForObject(finalString, Double.class, name1, name2);
-        System.out.println(distance);  
-        
+        System.out.println(distance);
+
         jdbcTemplate.update("UPDATE gallery SET similarity = ? WHERE name = ?", distance, name1);
 
         return distance;
@@ -131,14 +136,14 @@ public class Database implements InitializingBean {
 
     public double distanceHS(final String name1, final String name2) throws Exception {
         String finalString = """
-            SELECT (g1.descr_HS <-> g2.descr_HS) 
-            FROM gallery g1, gallery g2 
-            WHERE g1.name = ? AND g2.name = ?
-        """;
+                    SELECT (g1.descr_HS <-> g2.descr_HS)
+                    FROM gallery g1, gallery g2
+                    WHERE g1.name = ? AND g2.name = ?
+                """;
 
         Double distance = jdbcTemplate.queryForObject(finalString, Double.class, name1, name2);
-        System.out.println(distance);   
-        
+        System.out.println(distance);
+
         jdbcTemplate.update("UPDATE gallery SET similarity = ? WHERE name = ?", distance, name1);
 
         return distance;

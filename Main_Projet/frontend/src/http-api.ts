@@ -79,6 +79,7 @@ function submitFile() {
   let formData = new FormData();
 
   formData.append('file', file);
+  console.log(file)
 
   axios.post('/images',
     formData,

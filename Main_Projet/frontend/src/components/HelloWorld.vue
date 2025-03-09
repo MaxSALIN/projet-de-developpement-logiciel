@@ -27,9 +27,9 @@ const buttonImage = ref('buttonCenterImage')
     </select>
     <div v-if="ok">  
       <p> Name : {{ imageName }}</p>
-          
+    </div>
       <img id="image" src="">  
-
+<div v-if="ok">
         <p> ID:  {{ imageID }}</p>
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
