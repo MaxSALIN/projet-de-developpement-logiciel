@@ -2,13 +2,14 @@ import axios from 'axios'
 import { ref } from 'vue';
 
 const images = ref();
+const similarImages = ref();
 
 function getImages() {
   return axios.get('/images').then(function (response) {
-    console.log(response);
-
+    console.log(response)
     images.value = response.data;
-    console.log(images.value);
+  }).catch(function (error) {
+    console.log(error);
   })
 }
 
@@ -114,4 +115,4 @@ function saveFile(image: any) {
 
 
 
-export { images, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }
+export { images, similarImages, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }
