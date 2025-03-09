@@ -7,11 +7,12 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.javatuples.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -43,31 +45,46 @@ public class ImageController {
     this.database = database;
   }
 
-  @RequestMapping(value = "/images/{id}/similar?number={N}&descriptor={DESCR}", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-  public ArrayNode getSimilarImages(@PathVariable("id") long id, @PathVariable("N") long N, @PathVariable("DESCR") String descr) throws IOException {
+  @RequestMapping(value = "/images/{id}/similar", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getSimilarImages(@PathVariable("id") long id, @RequestParam("number") long N, @RequestParam("descriptor") String DESCR) throws IOException {
     ArrayNode nodes = mapper.createArrayNode();
-    List<Double> scores = new ArrayList<>();
-    
+    List<Pair<Image, Double>> scores = new ArrayList<>();
     try {
       Collection<Image> listAll = database.retrieveAll();
-      String imgBase= "images/"+database.retrieve(id);
+      String imgToUse = database.retrieve(id);
+      
+      if(imgToUse==null){
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found with that ID");
+      }
       for (Image img : listAll) {
-        if("RGB".equals(descr)){  
-          scores.add(SimilarImages.distanceEuclidienne(SimilarImages.histogramRGB(imgBase), SimilarImages.histogramRGB("images/"+img.getName())));
+        if("RGB".equals(DESCR)){
+          Pair<Image, Double> current = Pair.with(img, database.distanceRGB(imgToUse, img.getName()));
+          scores.add(current);
         }
-        
+        else if("HS".equals(DESCR)){  
+          Pair<Image, Double> current = Pair.with(img, database.distanceHS(imgToUse, img.getName()));   
+          scores.add(current);
+        }
+        else{
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect descriptor");
+        }
        
       }
     } catch (Exception e) {
       System.err.println(e);
     }
-    Collections.sort(scores);
-    for (int i = 1; i <= N; i++) {
+
+    scores.sort(Comparator.comparing(Pair::getValue1));
+    
+    for (int i = 1; i <= Math.min(N, scores.size()); i++) {
       ObjectNode node = mapper.createObjectNode();
-      node.put("id", database.getId(scores.get.getName()));
+      Image img=scores.get(i).getValue0();
+      node.put("id", database.getId(img.getName()));
       node.put("name", img.getName());
       node.put("type", img.getType());
       node.put("size", img.getSize());
+      node.put("similarité", scores.get(i).getValue1());
       nodes.add(node);
     }
     return nodes;
@@ -138,7 +155,7 @@ public class ImageController {
           "images/"
               + file.getOriginalFilename());
       file.transferTo(file2);
-      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions);
+      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions, SimilarImages.histogramRGB(file.getOriginalFilename()), SimilarImages.histogramHS(file.getOriginalFilename()));
       try {
         database.create(img);
       } catch (Exception e) {
