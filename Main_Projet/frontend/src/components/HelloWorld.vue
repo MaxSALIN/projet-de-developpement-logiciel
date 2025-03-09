@@ -19,24 +19,6 @@ const buttonImage = ref('buttonCenterImage')
   <p> Voici un bouton pour vous amuser</p>
     <button type="button" @click="count++">Le compte est de : {{ count }}</button>
   </div>
-  <p :class="buttonImage">
-    <select>
-      <option>Choose an image</option>
-      <option v-for="image in images" @click=downloadImage(image)> {{ image.name }}</option>
-
-    </select>
-    <div v-if="ok">  
-      <p> Name : {{ imageName }}</p>
-          </div>
-      <img id="image" src="">  
-          <div v-if="ok">  
-        <p> ID:  {{ imageID }}</p>
-        <p> Size: {{ imageSize }}</p>
-        <p> Type: {{ imageType }}</p>
-    </div>
-
-    
-  </p>
   
 
 
