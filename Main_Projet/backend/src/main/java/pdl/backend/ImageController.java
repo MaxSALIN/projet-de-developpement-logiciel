@@ -47,39 +47,38 @@ public class ImageController {
 
   @RequestMapping(value = "/images/{id}/similar", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
-  public ArrayNode getSimilarImages(@PathVariable("id") long id, @RequestParam("number") long N, @RequestParam("descriptor") String DESCR) throws IOException {
+  public ArrayNode getSimilarImages(@PathVariable("id") long id, @RequestParam("number") long N,
+      @RequestParam("descriptor") String DESCR) throws IOException {
     ArrayNode nodes = mapper.createArrayNode();
     List<Pair<Image, Double>> scores = new ArrayList<>();
     try {
       Collection<Image> listAll = database.retrieveAll();
       String imgToUse = database.retrieve(id);
-      
-      if(imgToUse==null){
+
+      if (imgToUse == null) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found with that ID");
       }
       for (Image img : listAll) {
-        if("RGB".equals(DESCR)){
+        if ("RGB".equals(DESCR)) {
           Pair<Image, Double> current = Pair.with(img, database.distanceRGB(imgToUse, img.getName()));
           scores.add(current);
-        }
-        else if("HS".equals(DESCR)){  
-          Pair<Image, Double> current = Pair.with(img, database.distanceHS(imgToUse, img.getName()));   
+        } else if ("HS".equals(DESCR)) {
+          Pair<Image, Double> current = Pair.with(img, database.distanceHS(imgToUse, img.getName()));
           scores.add(current);
-        }
-        else{
+        } else {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect descriptor");
         }
-       
+
       }
     } catch (Exception e) {
       System.err.println(e);
     }
 
     scores.sort(Comparator.comparing(Pair::getValue1));
-    
+
     for (int i = 1; i <= Math.min(N, scores.size()); i++) {
       ObjectNode node = mapper.createObjectNode();
-      Image img=scores.get(i).getValue0();
+      Image img = scores.get(i).getValue0();
       node.put("id", database.getId(img.getName()));
       node.put("name", img.getName());
       node.put("type", img.getType());
@@ -150,7 +149,9 @@ public class ImageController {
               + file.getOriginalFilename());
       Files.createFile(pathFile2);
       file.transferTo(pathFile2);
-      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions, SimilarImages.histogramRGB(file.getOriginalFilename()), SimilarImages.histogramHS(file.getOriginalFilename()));
+      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions,
+          SimilarImages.histogramRGB(pathFile2.toString()),
+          SimilarImages.histogramHS(pathFile2.toString()));
       try {
         database.create(img);
       } catch (Exception e) {
