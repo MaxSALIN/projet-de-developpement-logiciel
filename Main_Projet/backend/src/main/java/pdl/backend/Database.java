@@ -37,7 +37,7 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255), similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255) NOT NULL, similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
         try {
             /*
              * ClassPathResource directoryResource = new ClassPathResource(
@@ -94,7 +94,8 @@ public class Database implements InitializingBean {
     }
 
     public int create(final Image img) throws Exception {
-        return jdbcTemplate.update("INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)",
+        return jdbcTemplate.update(
+                "INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)",
                 img.getName(),
                 img.getType(), img.getSize(), img.getDescr_RGB(), img.getDescr_HS());
     }

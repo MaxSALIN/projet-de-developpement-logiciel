@@ -16,47 +16,28 @@ function getImages() {
 const numberref = ref();
 const descrref = ref();
 
+
+
 function getSimilarImages() {
-  const reader = new window.FileReader();
-
-  reader.onload = function () {
-    const imageDataUrl = (reader.result as string);
-    var number = (<HTMLInputElement>document.getElementById("number")).value;
-    const form = document.querySelector("form");
-    let descr = "";
-    form?.addEventListener(
-      "submit",
-      (event) => {
-        const data = new FormData(form);
-
-        for (const entry of data) {
-          descr = `${entry[1]}\r`;
-        }
-
-        event.preventDefault();
-      },
-      false,
-    );
-
-
-    if (number == null) {
-      throw new Error("imageEL null");
-
-    } else {
-      numberref.value = number;
-      descrref.value = descr;
-
-      axios.get('/images/' + imageID + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value, { responseType: "blob" })
-        .then(function (response) {
-          console.log(response);
-          similarImages.value = response.data;
-        });
-
-    }
+  var descr = "";
+  var number = (<HTMLInputElement>document.getElementById("number")).value;
+  if ((<HTMLInputElement>document.getElementById("des1"))?.checked) {
+    descr = (<HTMLInputElement>document.getElementById("des1"))?.value;
+  } else {
+    descr = (<HTMLInputElement>document.getElementById("des2"))?.value;
   }
-
-
-
+  numberref.value = number.toString();
+  descrref.value = descr;
+  return axios.get('/images/' + imageID.value + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
+    .then(function (response) {
+      console.log(response);
+      similarImages.value = response.data;
+      console.log(similarImages.value);
+      ok.value = 1;
+      console.log(similarImages.value);
+    }).catch(function (e) {
+      console.log(e);
+    });
 }
 
 const ok = ref(0);

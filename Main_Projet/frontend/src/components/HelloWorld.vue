@@ -34,7 +34,6 @@ const buttonImage = ref('buttonCenterImage')
         <p> ID:  {{ imageID }}</p>
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
-        <form :action="/images/+imageID+'/similar'" method="get" name="similar" id="form">
           <label for="number">Enter the number of images you would like to see: </label>
           <input type="number" name="number" id="number">
 
@@ -45,12 +44,12 @@ const buttonImage = ref('buttonCenterImage')
           <input type="radio" id="des2" name="descriptor" value="HS">
           <label for="des2">Hue and Saturation</label>
           </div>
+          <input type="submit" value="More images!" @click="getSimilarImages()"/>
 
-          <input type="submit" value="More images!" :onclick="getSimilarImages()"/>
-        </form>
+        
     </div>
 
-      <div id="divImg" v-for="simage in similarImages" :class="buttonImage" v-if="ok">
+      <div id="divImg" v-for="simage in similarImages" :class="buttonImage">
         <img id="img" :src="concatURL(simage.id)" >
         <p>{{ simage.similarity }}</p>
   </div>
