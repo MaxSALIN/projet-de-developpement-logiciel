@@ -60,7 +60,7 @@ public class Database implements InitializingBean {
                             int h = image.getHeight();
                             dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
                         } catch (IOException ioe) {
-                            System.out.println(ioe);
+                            System.err.println(ioe);
                         }
                         if (path.getFileName().toString().endsWith(".jpeg")
                                 || path.getFileName().toString().endsWith("jpg")) {
@@ -132,7 +132,6 @@ public class Database implements InitializingBean {
                 """;
 
         Double distance = jdbcTemplate.queryForObject(finalString, Double.class, name1, name2);
-        System.out.println(distance);
 
         jdbcTemplate.update("UPDATE gallery SET similarity = ? WHERE name = ?", distance, name1);
 
@@ -147,7 +146,6 @@ public class Database implements InitializingBean {
                 """;
 
         Double distance = jdbcTemplate.queryForObject(finalString, Double.class, name1, name2);
-        System.out.println(distance);
 
         jdbcTemplate.update("UPDATE gallery SET similarity = ? WHERE name = ?", distance, name1);
 

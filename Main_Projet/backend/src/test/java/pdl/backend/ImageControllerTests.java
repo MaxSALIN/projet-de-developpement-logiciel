@@ -34,15 +34,15 @@ public class ImageControllerTests {
 
 	@BeforeAll
 	public static void reset() {
-  	// reset Image class static counter
-  	ReflectionTestUtils.setField(Image.class, "count", Long.valueOf(0));
+		// reset Image class static counter
+		ReflectionTestUtils.setField(Image.class, "count", Long.valueOf(0));
 	}
 
 	@Test
 	@Order(1)
 	public void getImageListShouldReturnSuccess() throws Exception {
 		this.mockMvc.perform(get("/images")).andExpect(status().isOk());
-		
+
 	}
 
 	@Test
@@ -54,7 +54,7 @@ public class ImageControllerTests {
 	@Test
 	@Order(3)
 	public void getImageShouldReturnSuccess() throws Exception {
-		this.mockMvc.perform(get("/images/0")).andExpect(status().isOk());
+		this.mockMvc.perform(get("/images/1")).andExpect(status().isOk());
 	}
 
 	@Test
@@ -72,14 +72,14 @@ public class ImageControllerTests {
 	@Test
 	@Order(6)
 	public void deleteImageShouldReturnSuccess() throws Exception {
-		this.mockMvc.perform(delete("/images/0")).andExpect(status().isOk());
+		this.mockMvc.perform(delete("/images/1")).andExpect(status().isOk());
 	}
-	
 
 	@Test
 	@Order(7)
 	public void createImageShouldReturnSuccess() throws Exception {
-		MockMultipartFile post = new MockMultipartFile("file", "b.jpeg", MediaType.IMAGE_JPEG_VALUE, "b.jpeg".getBytes());
+		MockMultipartFile post = new MockMultipartFile("file", "b.jpeg", MediaType.IMAGE_JPEG_VALUE,
+				"b.jpeg".getBytes());
 		mockMvc.perform(MockMvcRequestBuilders.multipart("/images").file(post)).andExpect(status().isOk());
 	}
 
@@ -87,7 +87,8 @@ public class ImageControllerTests {
 	@Order(8)
 	public void createImageShouldReturnUnsupportedMediaType() throws Exception {
 		MockMultipartFile post = new MockMultipartFile("file", "b.jpeg", "application/pdf", "b.jpeg".getBytes());
-		mockMvc.perform(MockMvcRequestBuilders.multipart("/images").file(post)).andExpect(status().isUnsupportedMediaType());
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/images").file(post))
+				.andExpect(status().isUnsupportedMediaType());
 	}
-	
+
 }

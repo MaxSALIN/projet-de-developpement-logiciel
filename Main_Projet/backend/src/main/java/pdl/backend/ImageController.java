@@ -141,7 +141,7 @@ public class ImageController {
         int h = image.getHeight();
         dimensions = String.valueOf(w).concat("*").concat(String.valueOf(h));
       } catch (IOException ioe) {
-        System.out.println(ioe);
+        System.err.println(ioe);
       }
 
       Path pathFile2 = Paths.get(
