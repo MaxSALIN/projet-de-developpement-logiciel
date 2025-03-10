@@ -13,6 +13,52 @@ function getImages() {
   })
 }
 
+const numberref = ref();
+const descrref = ref();
+
+function getSimilarImages() {
+  const reader = new window.FileReader();
+
+  reader.onload = function () {
+    const imageDataUrl = (reader.result as string);
+    var number = (<HTMLInputElement>document.getElementById("number")).value;
+    const form = document.querySelector("form");
+    let descr = "";
+    form?.addEventListener(
+      "submit",
+      (event) => {
+        const data = new FormData(form);
+
+        for (const entry of data) {
+          descr = `${entry[1]}\r`;
+        }
+
+        event.preventDefault();
+      },
+      false,
+    );
+
+
+    if (number == null) {
+      throw new Error("imageEL null");
+
+    } else {
+      numberref.value = number;
+      descrref.value = descr;
+
+      axios.get('/images/' + imageID + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value, { responseType: "blob" })
+        .then(function (response) {
+          console.log(response);
+          similarImages.value = response.data;
+        });
+
+    }
+  }
+
+
+
+}
+
 const ok = ref(0);
 
 const imageID = ref()
@@ -115,4 +161,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }
+export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }

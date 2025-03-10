@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { images, similarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName}  from '../http-api'
+import { images, getSimilarImages, similarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName}  from '../http-api'
 
 defineProps<{ msg: string }>()
 
@@ -34,9 +34,9 @@ const buttonImage = ref('buttonCenterImage')
         <p> ID:  {{ imageID }}</p>
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
-        <form action="" method="get" name="similar">
+        <form :action="/images/+imageID+'/similar'" method="get" name="similar" id="form">
           <label for="number">Enter the number of images you would like to see: </label>
-          <input type="number" name="number">
+          <input type="number" name="number" id="number">
 
           <label for="descriptor">Enter the descriptor you would like to use: </label>
           <div>
@@ -46,13 +46,13 @@ const buttonImage = ref('buttonCenterImage')
           <label for="des2">Hue and Saturation</label>
           </div>
 
-          <input type="submit" value="More images!"/>
+          <input type="submit" value="More images!" :onclick="getSimilarImages()"/>
         </form>
     </div>
 
-      <div id="divImg" v-for="image in similarImages" :class="buttonImage" v-if="ok">
-        <img id="img" :src="concatURL(image.id)" >
-        <p>{{ image.similarity }}</p>
+      <div id="divImg" v-for="simage in similarImages" :class="buttonImage" v-if="ok">
+        <img id="img" :src="concatURL(simage.id)" >
+        <p>{{ simage.similarity }}</p>
   </div>
 
     
