@@ -39,7 +39,7 @@ public class Database implements InitializingBean {
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255), similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
         try {
             ClassPathResource directoryResource = new ClassPathResource(
-                    "/images", Database.class);
+                    "images/");
             File folder = directoryResource.getFile();
             Path folderPath = folder.toPath();
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
@@ -110,7 +110,7 @@ public class Database implements InitializingBean {
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT name, type, size FROM gallery",
+        return jdbcTemplate.query("SELECT name, type, size, descr_RGB, descr_HS FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));
     }
 
