@@ -14,9 +14,7 @@ import boofcv.struct.image.Planar;
 public class SimilarImages {
 
     public static double[] histogramRGB(String input) {
-        System.out.println(input);
         BufferedImage input1 = UtilImageIO.loadImage(input);
-        System.out.println(input1);
         Planar<GrayF32> image1 = ConvertBufferedImage.convertFromPlanar(input1, null, true, GrayF32.class);
         Histogram_F64 histogram = new Histogram_F64(10, 10, 10);
         histogram.setRange(0, 0, 255);

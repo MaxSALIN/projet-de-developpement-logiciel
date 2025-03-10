@@ -36,7 +36,7 @@ function downloadImage(image: any) {
         } else {
           imageEl.setAttribute("src", imageDataUrl);
           imageID.value = image.id;
-          imageSize.value = image.size + " octets";
+          imageSize.value = image.size;
           imageType.value = image.type; // essayer de mieux presenter ?
           imageName.value = image.name; // de meme ?
           ok.value = 1;

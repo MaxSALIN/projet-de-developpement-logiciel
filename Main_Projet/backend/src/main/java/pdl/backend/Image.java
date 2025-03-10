@@ -11,7 +11,8 @@ public class Image {
 
   }
 
-  public Image(final String name, final String type, final String size, final double[] descr_RGB, final double[] descr_HS) {
+  public Image(final String name, final String type, final String size, final double[] descr_RGB,
+      final double[] descr_HS) {
     this.name = name;
     this.type = type;
     this.size = size;
@@ -37,6 +38,10 @@ public class Image {
 
   public String getSize() {
     return size;
+  }
+
+  public void setSize(final String size) {
+    this.size = size;
   }
 
   public void setDescr_RGB(final double[] descr_RGB) {
