@@ -39,7 +39,8 @@ getImages();
 
 #img {
   width: 18em;
-  height: fit-content;
+  height: 18em;
+  object-fit: contain;
   will-change: filter;
   transition: filter 300ms;
 }

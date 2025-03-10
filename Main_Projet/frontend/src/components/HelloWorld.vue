@@ -34,8 +34,8 @@ const buttonImage = ref('buttonCenterImage')
         <p> ID:  {{ imageID }}</p>
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
-          <label for="number">Enter the number of images you would like to see: </label>
-          <input type="number" name="number" id="number">
+          <div><label for="number">Enter the number of images you would like to see: </label>
+          <input type="number" name="number" id="number"></div>
 
           <label for="descriptor">Enter the descriptor you would like to use: </label>
           <div>
@@ -45,24 +45,21 @@ const buttonImage = ref('buttonCenterImage')
           <label for="des2">Hue and Saturation</label>
           </div>
           <input type="submit" value="More images!" @click="getSimilarImages()"/>
-
-        
+ 
     </div>
 
       <div id="divImg" v-for="simage in similarImages" :class="buttonImage">
         <img id="img" :src="concatURL(simage.id)" >
-        <p>{{ simage.similarity }}</p>
-  </div>
+        <p>Similarité de l'image: {{ simage.similarité }}</p>
+    </div>
 
     
   </p>
 
 
-
-
-	<div class="container">
-		<div>
       <hr/>
+		<div>
+
 			<h1 :class="titleClass">Déposez votre image ici</h1>
 			<label>File
 				<input type="file" @change="handleFileUpload( $event )"/>
@@ -71,8 +68,6 @@ const buttonImage = ref('buttonCenterImage')
 			<button v-on:click="submitFile()">Submit</button>
       <hr/>
 		</div>
-	</div>
-
 </template>
 
 
@@ -92,5 +87,22 @@ const buttonImage = ref('buttonCenterImage')
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
+}
+#divImg {
+  display:inline-flex;
+  width: 22em;
+  height: 22em;
+}
+
+#img {
+  object-fit: contain;
+  width: 18em;
+  height: 18em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+#img:hover {
+    filter: drop-shadow(0 0 1em #4b51b6aa);
 }
 </style>
