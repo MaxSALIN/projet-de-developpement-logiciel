@@ -64,6 +64,12 @@
             <version>4.0.0</version>
         </dependency>
 		
+        <dependency>
+            <groupId>org.boofcv</groupId>
+            <artifactId>boofcv-core</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+
     </dependencies>
 
     <build>
