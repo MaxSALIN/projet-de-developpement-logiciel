@@ -32,6 +32,7 @@ public class ImageControllerTests {
 	@Autowired
 	private MockMvc mockMvc;
 
+
 	@BeforeAll
 	public static void reset() {
 		// reset Image class static counter
@@ -48,7 +49,7 @@ public class ImageControllerTests {
 	@Test
 	@Order(2)
 	public void getImageShouldReturnNotFound() throws Exception {
-		this.mockMvc.perform(get("/image")).andExpect(status().isNotFound());
+		this.mockMvc.perform(get("/images/1000")).andExpect(status().isNotFound());
 	}
 
 	@Test
@@ -66,7 +67,7 @@ public class ImageControllerTests {
 	@Test
 	@Order(5)
 	public void deleteImageShouldReturnNotFound() throws Exception {
-		this.mockMvc.perform(delete("/image")).andExpect(status().isNotFound());
+		this.mockMvc.perform(delete("/images/1000")).andExpect(status().isNotFound());
 	}
 
 	@Test

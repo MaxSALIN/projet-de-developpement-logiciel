@@ -13,6 +13,8 @@ import boofcv.struct.image.Planar;
 
 public class SimilarImages {
 
+    ///////////////////////////////////         Histogram 3D RGB         /////////////////////////////////////////////
+
     public static double[] histogramRGB(String input) {
         BufferedImage input1 = UtilImageIO.loadImage(input);
         Planar<GrayF32> image1 = ConvertBufferedImage.convertFromPlanar(input1, null, true, GrayF32.class);
@@ -27,6 +29,8 @@ public class SimilarImages {
         return histogram.data;
     }
 
+    ///////////////////////////////////         Histogram 2D HS         /////////////////////////////////////////////
+    
     public static double[] histogramHS(String input) {
         BufferedImage input1 = UtilImageIO.loadImage(input);
         Planar<GrayF32> image1 = ConvertBufferedImage.convertFromPlanar(input1, null, true, GrayF32.class);
@@ -41,17 +45,6 @@ public class SimilarImages {
         GHistogramFeatureOps.histogram(hs, histogram);
         UtilFeature.normalizeL2(histogram);
         return histogram.data;
-    }
-
-    public static double distanceEuclidienne(double[] baseImage, double[] imgToCompare) {
-        double dist = 0;
-
-        for (int i = 0; i < baseImage.length; i++) {
-
-            dist += (baseImage[i] - imgToCompare[i]) * (baseImage[i] - imgToCompare[i]);
-
-        }
-        return Math.sqrt(dist);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -159,36 +152,4 @@ public class SimilarImages {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void main(String[] args) {
-
-        // load image
-        /*
-         * if (args.length < 2) {
-         * System.out.println("missing input or output image filename");
-         * System.exit(-1);
-         * }
-         * final String inputPath = args[0];
-         * BufferedImage input = UtilImageIO.loadImage(inputPath);
-         * 
-         * if(input == null) {
-         * System.err.println("Cannot read input file '" + inputPath);
-         * System.exit(-1);
-         * }
-         * 
-         * BufferedImage input1 =
-         * UtilImageIO.loadImage("colorimages/hamac-640x426.jpg");
-         * BufferedImage input2 = UtilImageIO.loadImage("colorimages/poppy.jpg");
-         * Planar<GrayF32> image1 = ConvertBufferedImage.convertFromPlanar(input1, null,
-         * true, GrayF32.class);
-         * Planar<GrayF32> image2 = ConvertBufferedImage.convertFromPlanar(input2, null,
-         * true, GrayF32.class);
-         * double test =distanceEuclidienne(histogramRGB(image1), histogramRGB(image2));
-         * System.out.println("Distance =" + test);
-         * 
-         * 
-         * final String outputPath = args[1];
-         * UtilImageIO.saveImage(image1, outputPath);
-         * System.out.println("Image saved in: " + outputPath);
-         */
-    }
 }

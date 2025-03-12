@@ -80,7 +80,7 @@ function deleteImage(id: number) {
       }
     }
   ).then(
-    function (response) {
+    function () {
       getImages();
       ok.value = 0;
       var imageEl = document.getElementById("image");

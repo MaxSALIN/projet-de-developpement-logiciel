@@ -35,6 +35,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
 public class ImageController {
 
+  ///////////////////////////////////         Initialisation        /////////////////////////////////////////////
   @Autowired
   private ObjectMapper mapper;
 
@@ -45,6 +46,52 @@ public class ImageController {
     this.database = database;
   }
 
+  ///////////////////////////////////         GET Requests         /////////////////////////////////////////////
+
+  //GET /images
+  @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getImageList() throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    try {
+      Collection<Image> listAll = database.retrieveAll();
+      for (Image img : listAll) {
+        ObjectNode node = mapper.createObjectNode();
+        node.put("id", database.getId(img.getName()));
+        node.put("name", img.getName());
+        node.put("type", img.getType());
+        node.put("size", img.getSize());
+        nodes.add(node);
+      }
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+
+    return nodes;
+  }
+
+  //GET /images/{id}
+  @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
+    byte[] fileContent = new byte[] {};
+    try {
+      if (!database.retrieve(id).equals("")) {
+        Path pathFile = Paths.get("src/main/resources/images/" + database.retrieve(id));
+        try {
+          fileContent = Files.readAllBytes(pathFile);
+        } catch (final IOException e) {
+          System.err.println(e);
+          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+      }
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
+    } catch (Exception e) {
+      System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+  }
+
+  //GET /images/{id}/similar
   @RequestMapping(value = "/images/{id}/similar", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
   public ArrayNode getSimilarImages(@PathVariable("id") long id, @RequestParam("number") long N,
@@ -89,25 +136,7 @@ public class ImageController {
     return nodes;
   }
 
-  @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-  public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
-    byte[] fileContent = new byte[] {};
-    try {
-      if (!database.retrieve(id).equals("")) {
-        Path pathFile = Paths.get("src/main/resources/images/" + database.retrieve(id));
-        try {
-          fileContent = Files.readAllBytes(pathFile);
-        } catch (final IOException e) {
-          System.err.println(e);
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-      }
-      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(fileContent);
-    } catch (Exception e) {
-      System.err.println(e);
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-    }
-  }
+  ///////////////////////////////////         DELETE Request         /////////////////////////////////////////////
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
@@ -121,6 +150,8 @@ public class ImageController {
     }
     return ResponseEntity.ok().body(null);
   }
+
+  ///////////////////////////////////         POST Request         /////////////////////////////////////////////
 
   @RequestMapping(value = "/images", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
@@ -161,25 +192,6 @@ public class ImageController {
     }
   }
 
-  @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
-  @ResponseBody
-  public ArrayNode getImageList() throws IOException {
-    ArrayNode nodes = mapper.createArrayNode();
-    try {
-      Collection<Image> listAll = database.retrieveAll();
-      for (Image img : listAll) {
-        ObjectNode node = mapper.createObjectNode();
-        node.put("id", database.getId(img.getName()));
-        node.put("name", img.getName());
-        node.put("type", img.getType());
-        node.put("size", img.getSize());
-        nodes.add(node);
-      }
-    } catch (Exception e) {
-      System.err.println(e);
-    }
-
-    return nodes;
-  }
+  
 
 }
