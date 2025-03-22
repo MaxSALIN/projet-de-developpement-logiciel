@@ -19,42 +19,7 @@ const buttonImage = ref('buttonCenterImage')
   <p> Voici un bouton pour vous amuser</p>
     <button type="button" @click="count++">Le compte est de : {{ count }}</button>
   </div>
-  
-  <p :class="buttonImage">
-    <select>
-      <option>Choose an image</option>
-      <option v-for="image in images" @click=downloadImage(image)> {{ image.name }}</option>
 
-    </select>
-    <div v-if="ok">  
-      <p> Name : {{ imageName }}</p>
-          </div>
-      <img id="image" src="">  
-    <div v-if="ok">  
-        <p> ID:  {{ imageID }}</p>
-        <p> Size: {{ imageSize }}</p>
-        <p> Type: {{ imageType }}</p>
-          <div><label for="number">Enter the number of images you would like to see: </label>
-          <input type="number" name="number" id="number"></div>
-
-          <label for="descriptor">Enter the descriptor you would like to use: </label>
-          <div>
-          <input type="radio" id="des1" name="descriptor" value="RGB">
-          <label for="des1">RGB</label>
-          <input type="radio" id="des2" name="descriptor" value="HS">
-          <label for="des2">Hue and Saturation</label>
-          </div>
-          <input type="submit" value="More images!" @click="getSimilarImages()"/>
- 
-    </div>
-
-      <div id="divImg" v-for="simage in similarImages" :class="buttonImage">
-        <img id="img" :src="concatURL(simage.id)" >
-        <p>Similarité de l'image: {{ simage.similarité }}</p>
-    </div>
-
-    
-  </p>
 
 
       <hr/>
