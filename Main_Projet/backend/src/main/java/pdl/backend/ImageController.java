@@ -157,8 +157,8 @@ public class ImageController {
   /////////////////////////////////// POST Request
   /////////////////////////////////// /////////////////////////////////////////////
 
-  @RequestMapping(value = "/images", method = RequestMethod.POST)
-  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
+  @RequestMapping(value = "/images/{dir}", method = RequestMethod.POST)
+  public ResponseEntity<?> addImage(@PathVariable("dir") String dir, @RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
     if (!(file
         .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
@@ -178,13 +178,22 @@ public class ImageController {
       } catch (IOException ioe) {
         System.err.println(ioe);
       }
-
-      Path pathFile2 = Paths.get(
-          "src/main/resources/images/"
-              + file.getOriginalFilename());
+      Path pathFile2;
+      if (dir.equals("*")) {
+        pathFile2 = Paths.get(
+            "src/main/resources/images/"
+                + file.getOriginalFilename());
+      } else {
+        pathFile2 = Paths.get(
+            "src/main/resources/images/" + dir + "/"
+                + file.getOriginalFilename());
+      }
+      if (dir.equals("*")) {
+        dir = "";
+      }
       Files.createFile(pathFile2);
       file.transferTo(pathFile2);
-      Image img = new Image("", file.getOriginalFilename(), file.getContentType(), dimensions,
+      Image img = new Image(dir, file.getOriginalFilename(), file.getContentType(), dimensions,
           SimilarImages.histogramRGB(pathFile2.toString()),
           SimilarImages.histogramHS(pathFile2.toString()));
       try {
