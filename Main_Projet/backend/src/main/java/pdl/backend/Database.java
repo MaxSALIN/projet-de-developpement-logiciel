@@ -24,7 +24,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class Database implements InitializingBean {
 
-    ///////////////////////////////////         Initialisation         /////////////////////////////////////////////
+    /////////////////////////////////// Initialisation
+    /////////////////////////////////// /////////////////////////////////////////////
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -40,15 +41,24 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.update("INSERT INTO orientations (name) VALUES ('paysage')");
         this.jdbcTemplate.execute("SELECT * FROM orientations");
         this.jdbcTemplate.execute(
-                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255) NOT NULL, similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
+                "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, directory character varying(255), name character varying(255) NOT NULL, type character varying(255), size character varying(255) NOT NULL, similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
         try {
             Path folderPath = Paths.get("src/main/resources/images");
-            try (Stream<Path> paths = Files.walk(folderPath, 1)) {
+            try (Stream<Path> paths = Files.walk(folderPath)) {
                 paths.filter(Files::isRegularFile).forEach((Path path) -> {
                     byte[] fileBytes;
                     try {
                         fileBytes = Files.readAllBytes(path);
-                        String name = path.toFile().getName();
+                        int depth = folderPath.relativize(path).getNameCount();
+                        String directory;
+                        String name;
+                        if (depth == 1) {
+                            directory = "";
+                            name = folderPath.relativize(path).toString();
+                        } else {
+                            directory = folderPath.relativize(path).getParent().toString();
+                            name = folderPath.relativize(path).getFileName().toString();
+                        }
                         InputStream pathInputStream = new FileInputStream(path.toFile());
                         String dimensions = "";
                         try {
@@ -62,7 +72,7 @@ public class Database implements InitializingBean {
                         if (path.getFileName().toString().endsWith(".jpeg")
                                 || path.getFileName().toString().endsWith("jpg")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_JPEG_VALUE, dimensions,
+                                Image img = new Image(directory, name, MediaType.IMAGE_JPEG_VALUE, dimensions,
                                         SimilarImages.histogramRGB(path.toFile().toString()),
                                         SimilarImages.histogramHS(path.toFile().toString()));
                                 create(img);
@@ -72,7 +82,7 @@ public class Database implements InitializingBean {
                         }
                         if (path.getFileName().toString().endsWith(".png")) {
                             try {
-                                Image img = new Image(name, MediaType.IMAGE_PNG_VALUE, dimensions,
+                                Image img = new Image(directory, name, MediaType.IMAGE_PNG_VALUE, dimensions,
                                         SimilarImages.histogramRGB(path.toFile().toString()),
                                         SimilarImages.histogramHS(path.toFile().toString()));
                                 create(img);
@@ -90,12 +100,13 @@ public class Database implements InitializingBean {
         }
     }
 
-    ///////////////////////////////////         Image In Database Related         /////////////////////////////////////////////
+    /////////////////////////////////// Image In Database Related
+    /////////////////////////////////// /////////////////////////////////////////////
 
     public int create(final Image img) throws Exception {
         return jdbcTemplate.update(
-                "INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)",
-                img.getName(),
+                "INSERT INTO gallery (directory, name, type, size, descr_RGB, descr_HS) VALUES (?, ?, ?, ?, ?, ?)",
+                img.getDirectory(), img.getName(),
                 img.getType(), img.getSize(), img.getDescr_RGB(), img.getDescr_HS());
     }
 
@@ -107,10 +118,25 @@ public class Database implements InitializingBean {
         // Not used
     }
 
+    public String retrieve_name(final long id) throws Exception {
+        String finalString;
+        String name = jdbcTemplate.queryForObject("SELECT name FROM gallery WHERE id = ?", String.class,
+                (id));
+        finalString = name;
+        return finalString;
+    }
+
     public String retrieve(final long id) throws Exception {
         String finalString;
-        finalString = jdbcTemplate.queryForObject("SELECT name FROM gallery WHERE id = ?", String.class,
+        String name = jdbcTemplate.queryForObject("SELECT name FROM gallery WHERE id = ?", String.class,
                 (id));
+        String directory = jdbcTemplate.queryForObject("SELECT directory FROM gallery WHERE id = ?", String.class,
+                (id));
+        if (directory.equals("")) {
+            finalString = name;
+        } else {
+            finalString = directory.concat("/").concat(name);
+        }
         return finalString;
     }
 
@@ -123,7 +149,8 @@ public class Database implements InitializingBean {
         return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE name=?", String.class, name);
     }
 
-    ///////////////////////////////////         Descriptors/Histograms related         /////////////////////////////////////////////
+    /////////////////////////////////// Descriptors/Histograms related
+    /////////////////////////////////// /////////////////////////////////////////////
 
     public double distanceRGB(final String name1, final String name2) throws Exception {
         String finalString = """
