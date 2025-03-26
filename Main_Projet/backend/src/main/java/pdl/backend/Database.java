@@ -43,6 +43,11 @@ public class Database implements InitializingBean {
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255) NOT NULL, similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
         try {
             Path folderPath = Paths.get("src/main/resources/images");
+            
+            /*ClassPathResource directoryResource = new ClassPathResource("images/");
+            File file = directoryResource.getFile();
+            Path folderPath = file.toPath();*/
+
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
                 paths.filter(Files::isRegularFile).forEach((Path path) -> {
                     byte[] fileBytes;

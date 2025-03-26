@@ -3,8 +3,6 @@ package pdl.backend;
 public class Image {
 
   ///////////////////////////////////         Initialisation         /////////////////////////////////////////////
-  private static Long count = Long.valueOf(0);
-
   private String name;
   private String type;
   private String size;
@@ -12,7 +10,7 @@ public class Image {
   private double[] descr_HS;
 
   public Image() {
-    count++;
+
   }
 
   public Image(final String name, final String type, final String size, final double[] descr_RGB, final double[] descr_HS) {
@@ -21,7 +19,7 @@ public class Image {
     this.size = size;
     this.descr_RGB = descr_RGB;
     this.descr_HS = descr_HS;
-    count++;
+
   }
 
   ///////////////////////////////////         Getters         /////////////////////////////////////////////

@@ -164,6 +164,7 @@ public class ImageController {
     } else {
       byte[] filecontent = file.getBytes();
       Long size = file.getSize();
+      System.out.println(file.getName()+"\n\n\n\n\n\n\n");
       InputStream imageInputStream = file.getInputStream();
       String dimensions = "";
       try {
