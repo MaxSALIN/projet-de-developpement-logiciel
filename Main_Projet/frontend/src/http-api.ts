@@ -1,5 +1,6 @@
-import axios from 'axios'
+import axios from 'axios';
 import { ref } from 'vue';
+import router from './router';
 
 const images = ref();
 const similarImages = ref();
@@ -28,13 +29,15 @@ function getSimilarImages() {
   }
   numberref.value = number.toString();
   descrref.value = descr;
-  return axios.get('/images/' + imageID.value + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
+  return axios.get('/images/' + localStorage.getItem("id") + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
     .then(function (response) {
       console.log(response);
       similarImages.value = response.data;
       console.log(similarImages.value);
       ok.value = 1;
       console.log(similarImages.value);
+      localStorage.setItem("simImages", similarImages.value);
+      router.push({ name: "similar", params: { id: localStorage.getItem("id") } })
     }).catch(function (e) {
       console.log(e);
     });
@@ -42,10 +45,11 @@ function getSimilarImages() {
 
 const ok = ref(0);
 
-const imageID = ref()
-const imageSize = ref()
-const imageType = ref()
-const imageName = ref()
+const image_real = ref();
+const imageID = ref();
+const imageSize = ref();
+const imageType = ref();
+const imageName = ref();
 
 function downloadImage(image: any) {
   axios.get('/images/' + image.id, { responseType: "blob" })
@@ -62,6 +66,7 @@ function downloadImage(image: any) {
 
         } else {
           imageEl.setAttribute("src", imageDataUrl);
+          image_real.value = image;
           imageID.value = image.id;
           imageSize.value = image.size;
           imageType.value = image.type; // essayer de mieux presenter ?
@@ -70,6 +75,13 @@ function downloadImage(image: any) {
         }
       }
     });
+  localStorage.setItem("name", image.name);
+  localStorage.setItem("id", image.id);
+  localStorage.setItem("size", image.size);
+  localStorage.setItem("type", image.type);
+
+
+
 }
 
 function deleteImage(id: number) {
@@ -142,4 +154,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage }
+export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real }

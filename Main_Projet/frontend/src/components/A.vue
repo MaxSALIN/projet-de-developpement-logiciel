@@ -2,20 +2,18 @@
 import { ref } from 'vue';
 import { getImages, images, concatURL, saveFile, deleteImage, downloadImage }  from '../http-api'
 
-
 defineProps<{ msg: string }>()
 const titleClass = ref('title') 
 const buttonImage = ref('buttonCenterImage') 
 
 getImages();
 
-
 </script>
 
 <template>
   <h1 :class="titleClass">{{ msg }}</h1>
   <div id="divImg" v-for="image in images" :class="buttonImage">
-    <router-link :to="/images/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link>
+ <router-link :to="/image/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link> 
     <button type="button" @click="saveFile(image)"> Save File On Disk</button>
     <button type="button" @click="deleteImage(image.id)">Delete</button>
   </div>
