@@ -21,6 +21,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class Database implements InitializingBean {
+
+    ///////////////////////////////////         Initialisation         /////////////////////////////////////////////
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -37,13 +40,12 @@ public class Database implements InitializingBean {
         this.jdbcTemplate.execute(
                 "CREATE TABLE IF NOT EXISTS gallery (id bigserial PRIMARY KEY, name character varying(255) NOT NULL, type character varying(255), size character varying(255) NOT NULL, similarity character varying(255), descr_RGB vector(1000) NOT NULL, descr_HS vector(400) NOT NULL)");
         try {
-            /*
-             * ClassPathResource directoryResource = new ClassPathResource(
-             * "images/");
-             * File folder = directoryResource.getFile();
-             * Path folderPath = folder.toPath();
-             */
             Path folderPath = Paths.get("src/main/resources/images");
+            
+            /*ClassPathResource directoryResource = new ClassPathResource("images/");
+            File file = directoryResource.getFile();
+            Path folderPath = file.toPath();*/
+
             try (Stream<Path> paths = Files.walk(folderPath, 1)) {
                 paths.filter(Files::isRegularFile).forEach((Path path) -> {
                     byte[] fileBytes;
@@ -91,6 +93,8 @@ public class Database implements InitializingBean {
         }
     }
 
+    ///////////////////////////////////         Image In Database Related         /////////////////////////////////////////////
+
     public int create(final Image img) throws Exception {
         return jdbcTemplate.update(
                 "INSERT INTO gallery (name, type, size, descr_RGB, descr_HS) VALUES ( ?, ?,?, ? ,?)",
@@ -113,14 +117,16 @@ public class Database implements InitializingBean {
         return finalString;
     }
 
-    public String getId(final String name) {
-        return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE name=?", String.class, name);
-    }
-
     public Collection<Image> retrieveAll() throws Exception {
         return jdbcTemplate.query("SELECT name, type, size FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));
     }
+
+    public String getId(final String name) {
+        return jdbcTemplate.queryForObject("SELECT id FROM gallery WHERE name=?", String.class, name);
+    }
+
+    ///////////////////////////////////         Descriptors/Histograms related         /////////////////////////////////////////////
 
     public double distanceRGB(final String name1, final String name2) throws Exception {
         String finalString = """
