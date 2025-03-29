@@ -14,7 +14,7 @@ const buttonImage = ref('buttonCenterImage')
 
 
 <div id="divImg" v-for="simage in similarImages" :class="buttonImage">
-    <router-link :to="/images/+simage.id" @click="downloadImage(simage)"> <img id="img" :src="concatURL(simage.id)" ></router-link>
+    <router-link :to="/image/+simage.id" @click="downloadImage(simage)"> <img id="img" :src="concatURL(simage.id)" ></router-link>
   <p>Similarité de l'image: {{ simage.similarité }}</p>
 </div>
 </template>
