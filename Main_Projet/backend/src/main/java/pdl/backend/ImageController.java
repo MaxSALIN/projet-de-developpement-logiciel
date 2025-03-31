@@ -91,6 +91,38 @@ public class ImageController {
     }
   }
 
+  //GET /images/{id}/{filter}
+  @RequestMapping(value = "/images/{id}/{filter}", method = RequestMethod.GET, produces =  MediaType.IMAGE_JPEG_VALUE)
+  @ResponseBody
+  public ResponseEntity<?> getFilter(@PathVariable("id") long id, @RequestParam("number") long N, @RequestParam("filter") String FILTER) throws IOException {
+    
+    try {
+      String imgToUse = database.retrieve(id);
+
+      if (imgToUse == null) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found with that ID");
+      }
+      if ("Black_And_White".equals(FILTER)) {
+        Filters.blackAndWhite(imgToUse);
+      } 
+      else if ("Gaussian_Blur".equals(FILTER)) {
+        Filters.gaussianBlur(imgToUse);
+      }  
+      else if ("Change_Color".equals(FILTER)) {
+        Filters.changeColor(imgToUse, N);
+      }
+      else if ("Pixel".equals(FILTER)) {
+        Filters.pixelFilter(imgToUse, (int) N);
+      }else {
+          throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect descriptor");
+      }
+      return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(null);
+    } catch (Exception e) {
+      System.err.println(e);
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
+  }
+
   //GET /images/{id}/similar
   @RequestMapping(value = "/images/{id}/similar", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
