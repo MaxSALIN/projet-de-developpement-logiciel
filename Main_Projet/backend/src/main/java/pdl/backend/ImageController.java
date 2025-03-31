@@ -166,8 +166,6 @@ public class ImageController {
       return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
 
     } else {
-      byte[] filecontent = file.getBytes();
-      Long size = file.getSize();
       InputStream imageInputStream = file.getInputStream();
       String dimensions = "";
       try {
