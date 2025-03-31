@@ -29,18 +29,9 @@ const imageType = localStorage.getItem("type");
         <p> Size: {{ imageSize }}</p>
         <p> Type: {{ imageType }}</p>
 
-          <label for="number">Enter the number of images you would like to see: </label>
-          <input type="number" name="number" id="number">
-          <div>
-          <label for="descriptor">Enter the descriptor you would like to use: </label>
 
-          <input type="radio" id="des1" name="descriptor" value="RGB">
-          <label for="des1">RGB</label>
-          <input type="radio" id="des2" name="descriptor" value="HS">
-          <label for="des2">Hue and Saturation</label>
-          </div>
+           <router-link :to="'/image/'+useRoute().params.id+'/similar'"> <button type="button" >Similar Images</button></router-link>   <router-link :to="'/image/'+useRoute().params.id+'/modify'"> <button type="button" >Modify</button></router-link>
 
-         <input type="submit" value="More images!" @click="getSimilarImages()"/>
         </hr>
 
 
