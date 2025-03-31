@@ -35,7 +35,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 @RestController
 public class ImageController {
 
-  ///////////////////////////////////         Initialisation        /////////////////////////////////////////////
+  /////////////////////////////////// Initialisation
+  /////////////////////////////////// /////////////////////////////////////////////
   @Autowired
   private ObjectMapper mapper;
 
@@ -46,9 +47,10 @@ public class ImageController {
     this.database = database;
   }
 
-  ///////////////////////////////////         GET Requests         /////////////////////////////////////////////
+  /////////////////////////////////// GET Requests
+  /////////////////////////////////// /////////////////////////////////////////////
 
-  //GET /images
+  // GET /images
   @RequestMapping(value = "/images", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
   public ArrayNode getImageList() throws IOException {
@@ -70,7 +72,7 @@ public class ImageController {
     return nodes;
   }
 
-  //GET /images/{id}
+  // GET /images/{id}
   @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
@@ -123,7 +125,7 @@ public class ImageController {
     }
   }
 
-  //GET /images/{id}/similar
+  // GET /images/{id}/similar
   @RequestMapping(value = "/images/{id}/similar", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
   @ResponseBody
   public ArrayNode getSimilarImages(@PathVariable("id") long id, @RequestParam("number") long N,
@@ -132,7 +134,7 @@ public class ImageController {
     List<Pair<Image, Double>> scores = new ArrayList<>();
     try {
       Collection<Image> listAll = database.retrieveAll();
-      String imgToUse = database.retrieve(id);
+      String imgToUse = database.retrieve_name(id);
 
       if (imgToUse == null) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found with that ID");
@@ -168,7 +170,8 @@ public class ImageController {
     return nodes;
   }
 
-  ///////////////////////////////////         DELETE Request         /////////////////////////////////////////////
+  /////////////////////////////////// DELETE Request
+  /////////////////////////////////// /////////////////////////////////////////////
 
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
@@ -183,10 +186,11 @@ public class ImageController {
     return ResponseEntity.ok().body(null);
   }
 
-  ///////////////////////////////////         POST Request         /////////////////////////////////////////////
+  /////////////////////////////////// POST Request
+  /////////////////////////////////// /////////////////////////////////////////////
 
-  @RequestMapping(value = "/images", method = RequestMethod.POST)
-  public ResponseEntity<?> addImage(@RequestParam("file") MultipartFile file,
+  @RequestMapping(value = "/images/{dir}", method = RequestMethod.POST)
+  public ResponseEntity<?> addImage(@PathVariable("dir") String dir, @RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
     if (!(file
         .getContentType().equals(MediaType.IMAGE_JPEG_VALUE))
@@ -194,9 +198,6 @@ public class ImageController {
       return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).body(null);
 
     } else {
-      byte[] filecontent = file.getBytes();
-      Long size = file.getSize();
-      System.out.println(file.getName()+"\n\n\n\n\n\n\n");
       InputStream imageInputStream = file.getInputStream();
       String dimensions = "";
       try {
@@ -207,13 +208,22 @@ public class ImageController {
       } catch (IOException ioe) {
         System.err.println(ioe);
       }
-
-      Path pathFile2 = Paths.get(
-          "src/main/resources/images/"
-              + file.getOriginalFilename());
+      Path pathFile2;
+      if (dir.equals("*")) {
+        pathFile2 = Paths.get(
+            "src/main/resources/images/"
+                + file.getOriginalFilename());
+      } else {
+        pathFile2 = Paths.get(
+            "src/main/resources/images/" + dir + "/"
+                + file.getOriginalFilename());
+      }
+      if (dir.equals("*")) {
+        dir = "";
+      }
       Files.createFile(pathFile2);
       file.transferTo(pathFile2);
-      Image img = new Image(file.getOriginalFilename(), file.getContentType(), dimensions,
+      Image img = new Image(dir, file.getOriginalFilename(), file.getContentType(), dimensions,
           SimilarImages.histogramRGB(pathFile2.toString()),
           SimilarImages.histogramHS(pathFile2.toString()));
       try {
@@ -224,7 +234,5 @@ public class ImageController {
       return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
   }
-
-  
 
 }

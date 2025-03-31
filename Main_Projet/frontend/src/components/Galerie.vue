@@ -6,7 +6,7 @@ import A from './A.vue'
 <template>
   <HelloWorld msg="Projet de développement Logiciel"/>
   <Submit msg="Postez vos images ici"/>
-  <A msg="Bienvue dans la galerie" />
+  <A msg="Bienvenue dans la galerie" />
 </template>
 
 <style scoped>
