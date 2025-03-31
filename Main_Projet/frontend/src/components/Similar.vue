@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { watch, ref } from 'vue'
-import { imageID, downloadImage, concatURL, similarImages, getSimilarImages }  from '../http-api'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { downloadImage, concatURL, similarImages, getSimilarImages }  from '../http-api'
 
-const path = "/images/" + useRoute().params.id
+
 const buttonImage = ref('buttonCenterImage') 
 
 </script>

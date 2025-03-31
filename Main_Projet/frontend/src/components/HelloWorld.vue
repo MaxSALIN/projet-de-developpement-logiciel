@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { images, getSimilarImages, similarImages, downloadImage, concatURL, handleFileUpload, submitFile, ok, imageID, imageSize, imageType, imageName}  from '../http-api'
+import { handleFileUpload, submitFile }  from '../http-api'
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 const titleClass = ref('title') 
 const namesClass = ref('names')
-const buttonImage = ref('buttonCenterImage') 
 
 
 </script>
