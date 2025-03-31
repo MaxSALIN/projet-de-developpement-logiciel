@@ -43,8 +43,10 @@ getImages();
   transition: filter 300ms;
 }
 
+
 #img:hover {
     filter: drop-shadow(0 0 1em #4b51b6aa);
+    transform: scale(1.1);
 }
 
 .buttonCenterImage{

@@ -29,3 +29,19 @@ const buttonImage = ref('buttonCenterImage')
   <p>Similarité de l'image: {{ simage.similarité }}</p>
 </div>
 </template>
+
+<style scoped>
+
+
+#img {
+  width: 18em;
+  height: 18em;
+  object-fit: contain;
+  will-change: filter;
+  transition: filter 300ms;
+}
+#img:hover {
+    filter: drop-shadow(0 0 1em #4b51b6aa);
+    transform: scale(1.1);
+}
+</style>
