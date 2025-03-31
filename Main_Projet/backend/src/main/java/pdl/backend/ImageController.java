@@ -73,7 +73,7 @@ public class ImageController {
   }
 
   // GET /images/{id}
-  @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+  @RequestMapping(value = "/images/{id}/content", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
     try {
@@ -91,6 +91,26 @@ public class ImageController {
       System.err.println(e);
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+  }
+
+  // GET /image/{id}
+  @RequestMapping(value = "/images/{id}/metadata", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getImageInfo(@PathVariable("id") long id) throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    try {
+      ObjectNode node = mapper.createObjectNode();
+      node.put("id", id);
+      node.put("name", database.retrieve_name(id));
+      System.out.println(database.retrieve_name(id));
+      node.put("type", database.retrieve_type(id));
+      node.put("size", database.retrieve_size(id));
+      nodes.add(node);
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+
+    return nodes;
   }
 
   // GET /images/{id}/similar

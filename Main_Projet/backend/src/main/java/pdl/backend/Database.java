@@ -124,6 +124,14 @@ public class Database implements InitializingBean {
         return finalString;
     }
 
+    public String retrieve_size(final long id) throws Exception {
+        return jdbcTemplate.queryForObject("SELECT size FROM gallery WHERE id = ?", String.class, id);
+    }
+
+    public String retrieve_type(final long id) throws Exception {
+        return jdbcTemplate.queryForObject("SELECT type FROM gallery WHERE id = ?", String.class, id);
+    }
+
     public String retrieve(final long id) throws Exception {
         String finalString;
         String name = jdbcTemplate.queryForObject("SELECT name FROM gallery WHERE id = ?", String.class,

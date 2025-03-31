@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
+import { getImage, image } from '../http-api';
 
-const path = "/images/" + useRoute().params.id
+let number = useRoute().params.id as string;
+
+const path = "/images/" +number + "/content";
 
 
-
-const imageName = localStorage.getItem("name");
-const imageSize = localStorage.getItem("size");
-const imageType = localStorage.getItem("type");
+getImage(number);
 
 
 </script>
 
 <template>
            <router-link to="/">Back Home</router-link> 
-      <p> Name : {{ imageName }}</p>
-      <img id="image" :src="path">  
+      <p> Name : {{ image[0].name }}</p>
+      <img id="image0" :src="path">  
         <p> ID:  {{ useRoute().params.id }}</p>
-        <p> Size: {{ imageSize }}</p>
-        <p> Type: {{ imageType }}</p>
+        <p> Size: {{ image[0].size }}</p>
+        <p> Type: {{ image[0].type }}</p>
 
 
            <router-link :to="'/image/'+useRoute().params.id+'/similar'"> <button type="button" >Similar Images</button></router-link>   <router-link :to="'/image/'+useRoute().params.id+'/modify'"> <button type="button" >Modify</button></router-link>

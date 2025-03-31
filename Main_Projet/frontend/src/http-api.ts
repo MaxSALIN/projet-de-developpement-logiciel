@@ -16,10 +16,19 @@ function getImages() {
 
 const numberref = ref();
 const descrref = ref();
+const image = ref();
 
 
+function getImage(id: string) {
+  return axios.get('/images/' + id + '/metadata').then(function (response) {
+    image.value = response.data;
+    console.log(image.value);
+  }).catch(function (e) {
+    console.log(e);
+  });
+}
 
-function getSimilarImages() {
+function getSimilarImages(id: string) {
   var descr = "";
   var number = (<HTMLInputElement>document.getElementById("number")).value;
   if ((<HTMLInputElement>document.getElementById("des1"))?.checked) {
@@ -29,15 +38,11 @@ function getSimilarImages() {
   }
   numberref.value = number.toString();
   descrref.value = descr;
-  return axios.get('/images/' + localStorage.getItem("id") + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
+  return axios.get('/images/' + id + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
     .then(function (response) {
-      console.log(response);
       similarImages.value = response.data;
-      console.log(similarImages.value);
       ok.value = 1;
-      console.log(similarImages.value);
-      localStorage.setItem("simImages", similarImages.value);
-      router.push({ name: "similar", params: { id: localStorage.getItem("id") } })
+      router.push({ name: "similar", params: { id: id } })
     }).catch(function (e) {
       console.log(e);
     });
@@ -52,7 +57,7 @@ const imageType = ref();
 const imageName = ref();
 
 function downloadImage(image: any) {
-  axios.get('/images/' + image.id, { responseType: "blob" })
+  axios.get('/images/' + image.id + '/content', { responseType: "blob" })
     .then(function (response) {
       const reader = new window.FileReader();
       reader.readAsDataURL(response.data);
@@ -66,20 +71,11 @@ function downloadImage(image: any) {
 
         } else {
           imageEl.setAttribute("src", imageDataUrl);
-          image_real.value = image;
-          imageID.value = image.id;
-          imageSize.value = image.size;
-          imageType.value = image.type; // essayer de mieux presenter ?
-          imageName.value = image.name; // de meme ?
           ok.value = 1;
+
         }
       }
     });
-  localStorage.setItem("name", image.name);
-  localStorage.setItem("id", image.id);
-  localStorage.setItem("size", image.size);
-  localStorage.setItem("type", image.type);
-
 
 
 }
@@ -103,7 +99,7 @@ function deleteImage(id: number) {
 }
 
 function concatURL(imageId: any) {
-  return "/images/".concat(imageId)
+  return "/images/".concat(imageId).concat("/content");
 }
 
 
@@ -154,4 +150,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real }
+export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, getImage, image }
