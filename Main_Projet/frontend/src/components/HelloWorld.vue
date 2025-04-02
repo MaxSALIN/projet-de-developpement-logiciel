@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { directories, handleDirectoryUpload, handleFileUpload, submitFile }  from '../http-api'
+import { directories, handleDirectoryUpload, handleFileUpload, submitFile, submitDir }  from '../http-api'
 
 defineProps<{ msg: string }>()
 
 const count = ref(0)
 const titleClass = ref('title') 
 const namesClass = ref('names')
-
+const message = ref();
 
 </script>
 
@@ -28,6 +28,7 @@ const namesClass = ref('names')
 			<label>File
 				<input type="file" @change="handleFileUpload( $event )"/>
 			</label>
+      <br />
       <label>Directory
 				<select>
           <option>Choose a directory for the image</option>
@@ -38,6 +39,14 @@ const namesClass = ref('names')
 			</label>
 			<br>
 			<button v-on:click="submitFile()">Submit</button>
+      <hr/>
+      <h1 :class="titleClass">Créez un nouveau dossier</h1>
+      <label>Name of new directory
+      <pre></pre>
+        <input v-model="message" placeholder="name"/>
+      </label>
+      <pre></pre>
+      <button v-on:click="submitDir(message)">Create</button>
       <hr/>
 		</div>
 </template>

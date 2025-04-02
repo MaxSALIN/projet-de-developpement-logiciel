@@ -146,6 +146,18 @@ function submitFile() {
     });
 }
 
+function submitDir(dir : string) {
+  axios.post('/images/createdir/' + dir
+  ).then(function () {
+    console.log('SUCCESS!!');
+    getImages();
+    getDirectories();
+  })
+    .catch(function () {
+      console.log('FAILURE!!');
+    });
+}
+
 function saveFile(image: any) {
   axios.get('/images/' + image.id, { responseType: "blob" })
     .then(function (response) {
@@ -165,4 +177,4 @@ function saveFile(image: any) {
 
 
 
-export { image, images, similarImages, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }
+export { image, images, similarImages, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }

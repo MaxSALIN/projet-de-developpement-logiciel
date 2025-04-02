@@ -5,6 +5,7 @@ import { getImages, images, concatURL, saveFile, deleteImage, downloadImage, get
 defineProps<{ msg: string }>()
 const titleClass = ref('title') 
 const buttonImage = ref('buttonCenterImage') 
+const message = ref()
 
 getImages();
 getDirectories();
@@ -13,6 +14,7 @@ getDirectories();
 
 <template>
   <h1 :class="titleClass">{{ msg }}</h1>
+  <pre></pre>
   <div id="divImg" v-for="image in images" :class="buttonImage">
  <router-link :to="/image/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link> 
     <button type="button" @click="saveFile(image)"> Save File On Disk</button>

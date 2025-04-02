@@ -243,4 +243,16 @@ public class ImageController {
     }
   }
 
+  @RequestMapping(value = "/images/createdir/{dir}", method = RequestMethod.POST)
+  public ResponseEntity<?> addDirectory(@PathVariable("dir") String dir,
+      RedirectAttributes redirectAttributes) throws IOException {
+        Path folderPath = Paths.get("src/main/resources/images");
+        try {
+          new File(folderPath.toString() + "/" + dir).mkdirs();
+        } catch (Exception e) {
+          System.err.println(e);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+      }
+
 }
