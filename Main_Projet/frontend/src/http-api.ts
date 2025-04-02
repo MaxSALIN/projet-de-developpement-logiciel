@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import router from './router';
 
 const images = ref();
+const directories = ref();
 const similarImages = ref();
 
 function getImages() {
@@ -11,6 +12,15 @@ function getImages() {
 
     images.value = response.data;
     console.log(images.value);
+  })
+}
+
+function getDirectories() {
+  return axios.get('/images/directories').then(function (response) {
+    console.log(response);
+
+    directories.value = response.data;
+    console.log(directories.value);
   })
 }
 
@@ -104,18 +114,23 @@ function concatURL(imageId: any) {
 
 
 let file = ''
+let directory = ''
 function handleFileUpload(event: any) {
   file = event.target.files[0];
-
 }
 
+function handleDirectoryUpload(event: string) {
+  directory = event;
+}
 
 function submitFile() {
   let formData = new FormData();
 
   formData.append('file', file);
-
-  axios.post('/images',
+  if (directory == 'images'){
+    directory = '*'
+  }
+  axios.post('/images/' + directory,
     formData,
     {
       headers: {
@@ -150,4 +165,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, getImage, image }
+export { image, images, similarImages, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }

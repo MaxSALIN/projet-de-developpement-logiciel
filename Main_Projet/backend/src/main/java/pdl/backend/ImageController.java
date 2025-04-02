@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -68,7 +69,26 @@ public class ImageController {
     } catch (Exception e) {
       System.err.println(e);
     }
+    return nodes;
+  }
 
+  // GET /directories
+  @RequestMapping(value = "/images/directories", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getDirectoriesList() throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    try {
+      Path folderPath = Paths.get("src/main/resources/images");
+      try (Stream<Path> paths = Files.walk(folderPath)) {
+          paths.filter(Files::isDirectory).forEach((Path path) ->{
+            ObjectNode node = mapper.createObjectNode();
+            node.put("name", path.getFileName().toString());
+            nodes.add(node);
+          });
+        }
+    } catch (Exception e) {
+      System.err.println(e);
+    }
     return nodes;
   }
 

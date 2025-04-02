@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getImages, images, concatURL, saveFile, deleteImage, downloadImage }  from '../http-api'
+import { getImages, images, concatURL, saveFile, deleteImage, downloadImage, getDirectories }  from '../http-api'
 
 defineProps<{ msg: string }>()
 const titleClass = ref('title') 
 const buttonImage = ref('buttonCenterImage') 
 
 getImages();
+getDirectories();
 
 </script>
 

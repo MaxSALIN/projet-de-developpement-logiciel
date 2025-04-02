@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { handleFileUpload, submitFile }  from '../http-api'
+import { directories, handleDirectoryUpload, handleFileUpload, submitFile }  from '../http-api'
 
 defineProps<{ msg: string }>()
 
@@ -27,6 +27,14 @@ const namesClass = ref('names')
 			<h1 :class="titleClass">Déposez votre image ici</h1>
 			<label>File
 				<input type="file" @change="handleFileUpload( $event )"/>
+			</label>
+      <label>Directory
+				<select>
+          <option>Choose a directory for the image</option>
+          <option v-for="directory in directories" @click="handleDirectoryUpload( directory.name )"> {{ directory.name }}</option>
+
+        </select>
+
 			</label>
 			<br>
 			<button v-on:click="submitFile()">Submit</button>
