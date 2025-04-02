@@ -5,6 +5,8 @@ import router from './router';
 const images = ref();
 const directories = ref();
 const similarImages = ref();
+const folder = ref();
+folder.value = ''
 
 function getImages() {
   return axios.get('/images').then(function (response) {
@@ -123,6 +125,18 @@ function handleDirectoryUpload(event: string) {
   directory = event;
 }
 
+function handleDirectoryCreate(event: string) {
+  if (event == "images"){
+    folder.value = ''
+  }
+  else if (event == ""){
+    folder.value = ''
+  }
+  else {
+  folder.value = event;
+  }
+}
+
 function submitFile() {
   let formData = new FormData();
 
@@ -177,4 +191,4 @@ function saveFile(image: any) {
 
 
 
-export { image, images, similarImages, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }
+export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }

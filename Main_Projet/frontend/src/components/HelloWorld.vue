@@ -29,9 +29,9 @@ const message = ref();
 				<input type="file" @change="handleFileUpload( $event )"/>
 			</label>
       <br />
-      <label>Directory
+      <label>Folder
 				<select>
-          <option>Choose a directory for the image</option>
+          <option>Choose a folder for the image</option>
           <option v-for="directory in directories" @click="handleDirectoryUpload( directory.name )"> {{ directory.name }}</option>
 
         </select>
@@ -41,7 +41,7 @@ const message = ref();
 			<button v-on:click="submitFile()">Submit</button>
       <hr/>
       <h1 :class="titleClass">Créez un nouveau dossier</h1>
-      <label>Name of new directory
+      <label>Name of new folder
       <pre></pre>
         <input v-model="message" placeholder="name"/>
       </label>

@@ -60,6 +60,7 @@ public class ImageController {
       Collection<Image> listAll = database.retrieveAll();
       for (Image img : listAll) {
         ObjectNode node = mapper.createObjectNode();
+        node.put("folder", img.getDirectory());
         node.put("id", database.getId(img.getName()));
         node.put("name", img.getName());
         node.put("type", img.getType());
