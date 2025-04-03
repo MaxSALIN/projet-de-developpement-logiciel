@@ -94,27 +94,51 @@ public class ImageController {
   }
 
   //GET /images/{id}/{filter}
-  @RequestMapping(value = "/images/{id}/{filter}", method = RequestMethod.GET, produces =  MediaType.IMAGE_JPEG_VALUE)
+  @RequestMapping(value = "/images/{id}/modify", method = RequestMethod.GET, produces =  MediaType.IMAGE_JPEG_VALUE)
   @ResponseBody
-  public ResponseEntity<?> getFilter(@PathVariable("id") long id, @RequestParam("number") long N, @RequestParam("filter") String FILTER) throws IOException {
-    
+  public ResponseEntity<?> getFilter(@PathVariable("id") long id, @RequestParam("number") long N, @RequestParam("filter") String FILTER) throws IOException {  
     try {
-      String imgToUse = database.retrieve(id);
-
-      if (imgToUse == null) {
+      String name_img=database.retrieve_name(id);
+      String directory_img = database.retrieve_directory(id);
+      String path = "src/main/resources/images/";
+      if (name_img == null || directory_img == null) {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Image not found with that ID");
       }
+      if(N<0){
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect number, should be higher than 0");
+      }
       if ("Black_And_White".equals(FILTER)) {
-        Filters.blackAndWhite(imgToUse);
+        Filters.blackAndWhite(directory_img, name_img);
+        String directory="black_and_white";
+        String name="Black_And_White_"+name_img;
+        String similar = path+directory+"/"+name;
+        System.out.println(similar);
+        Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
+        database.create(img_filtered);
       } 
       else if ("Gaussian_Blur".equals(FILTER)) {
-        Filters.gaussianBlur(imgToUse);
+        Filters.gaussianBlur(directory_img, name_img);
+        String directory="gaussian_blur";
+        String name="Gaussian_Blur_"+name_img;
+        String similar = path+directory+"/"+name;
+        Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
+        database.create(img_filtered);
       }  
       else if ("Change_Color".equals(FILTER)) {
-        Filters.changeColor(imgToUse, N);
+        Filters.changeColor(directory_img, name_img, N);
+        String directory="change_color";
+        String name="Change_Color_"+name_img;
+        String similar = path+directory+"/"+name;
+        Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
+        database.create(img_filtered);
       }
       else if ("Pixel".equals(FILTER)) {
-        Filters.pixelFilter(imgToUse, (int) N);
+        Filters.pixelFilter(directory_img, name_img, N);
+        String directory="pixel";
+        String name="Pixel_"+name_img;
+        String similar = path+directory+"/"+name;
+        Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
+        database.create(img_filtered);
       }else {
           throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect descriptor");
       }

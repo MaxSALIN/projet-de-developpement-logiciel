@@ -57,6 +57,7 @@ public class Database implements InitializingBean {
                             directory = folderPath.relativize(path).getParent().toString();
                             name = folderPath.relativize(path).getFileName().toString();
                         }
+                        System.out.println(directory);
                         InputStream pathInputStream = new FileInputStream(path.toFile());
                         String dimensions = "";
                         try {
@@ -123,6 +124,31 @@ public class Database implements InitializingBean {
         finalString = name;
         return finalString;
     }
+
+    public String retrieve_size(final long id) throws Exception {
+        String finalString;
+        String size = jdbcTemplate.queryForObject("SELECT size FROM gallery WHERE id = ?", String.class,
+                (id));
+        finalString = size;
+        return finalString;
+    }
+
+    public String retrieve_type(final long id) throws Exception {
+        String finalString;
+        String type = jdbcTemplate.queryForObject("SELECT type FROM gallery WHERE id = ?", String.class,
+                (id));
+        finalString = type;
+        return finalString;
+    }
+
+    public String retrieve_directory(final long id) throws Exception {
+        String finalString;
+        String directory = jdbcTemplate.queryForObject("SELECT directory FROM gallery WHERE id = ?", String.class,
+                (id));
+        finalString = directory;
+        return finalString;
+    }
+
 
     public String retrieve(final long id) throws Exception {
         String finalString;

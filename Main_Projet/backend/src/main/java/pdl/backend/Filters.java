@@ -1,6 +1,7 @@
 package pdl.backend;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import boofcv.alg.color.ColorHsv;
 import boofcv.alg.descriptor.UtilFeature;
@@ -13,9 +14,13 @@ import boofcv.struct.image.Planar;
 import boofcv.alg.filter.blur.BlurImageOps;
 
 public class Filters {
-    public static void blackAndWhite(String input) {
+
+
+    public static void blackAndWhite(String directory, String name) {
 		//create the input and output images
-        BufferedImage bufferedInput = UtilImageIO.loadImage(input);
+		String path = "src/main/resources/images/";
+		System.out.println(path+directory+"/"+name);
+        BufferedImage bufferedInput = UtilImageIO.loadImage(path+directory+"/"+name);
         Planar<GrayF32> imageSelected = ConvertBufferedImage.convertFromPlanar(bufferedInput, null, true, GrayF32.class);
         Planar<GrayF32> imageOutput = imageSelected.createSameShape();
 
@@ -33,14 +38,15 @@ public class Filters {
 		}
 
 		//saving the output image
-        final String outputPath = "Black_And_White_"+input;
+        final String outputPath = path+"black_and_white/Black_And_White_"+name;
 		UtilImageIO.saveImage(imageOutput, outputPath);
 		System.out.println("Image saved in: " + outputPath);
     }
 
-    public static void gaussianBlur(String input) {
+    public static void gaussianBlur(String directory, String name) {
 		//create the input and output images
-        BufferedImage bufferedInput = UtilImageIO.loadImage(input);
+		String path = "src/main/resources/images/";
+        BufferedImage bufferedInput = UtilImageIO.loadImage(path+directory+"/"+name);
         Planar<GrayF32> imageSelected = ConvertBufferedImage.convertFromPlanar(bufferedInput, null, true, GrayF32.class);
         Planar<GrayF32> imageOutput = imageSelected.createSameShape();
         
@@ -48,14 +54,15 @@ public class Filters {
         BlurImageOps.gaussian(imageSelected, imageOutput, -1, 8, null);
 
 		//saving the output image
-        final String outputPath =  "Gaussian_Blur_"+input;
+        final String outputPath =  path+"gaussian_blur/Gaussian_Blur_"+name;
 		UtilImageIO.saveImage(imageOutput, outputPath);
 		System.out.println("Image saved in: " + outputPath);
     }
     
-    public static void changeColor(String input, double hue){
+    public static void changeColor(String directory, String name, double hue){
 		//create the input and output images
-        BufferedImage bufferedInput = UtilImageIO.loadImage(input);
+		String path = "src/main/resources/images/";
+        BufferedImage bufferedInput = UtilImageIO.loadImage(path+directory+"/"+name);
         Planar<GrayF32> imageSelected = ConvertBufferedImage.convertFromPlanar(bufferedInput, null, true, GrayF32.class);
         Planar<GrayF32> imageOutput = imageSelected.createSameShape();
         
@@ -74,14 +81,17 @@ public class Filters {
 		}
 
 		//saving the output image	
-        final String outputPath =  "Change_Color_"+hue+"_"+input;
-		UtilImageIO.saveImage(imageOutput, outputPath);
+        final String outputPath =  path+"change_color/Change_Color_"+name;
+		
 		System.out.println("Image saved in: " + outputPath);
+		System.err.println("Image saved in: " + outputPath);
+		UtilImageIO.saveImage(imageOutput, outputPath);
     }
 
-    public static void pixelFilter(String input, int pixel_size) {
+    public static void pixelFilter(String directory, String name, double pixel_size) {
 		//create the input and output images
-		BufferedImage bufferedInput = UtilImageIO.loadImage(input);
+		String path = "src/main/resources/images/";
+		BufferedImage bufferedInput = UtilImageIO.loadImage(path+directory+"/"+name);
         Planar<GrayF32> imageSelected = ConvertBufferedImage.convertFromPlanar(bufferedInput, null, true, GrayF32.class);
         Planar<GrayF32> imageOutput = imageSelected.createSameShape();
 
@@ -106,7 +116,7 @@ public class Filters {
 		}
 
 		//saving the output image
-		final String outputPath =  "Pixel_"+input;
+		final String outputPath =  path+"pixel/Pixel_"+name;
 		UtilImageIO.saveImage(imageOutput, outputPath);
 		System.out.println("Image saved in: " + outputPath);
 	}

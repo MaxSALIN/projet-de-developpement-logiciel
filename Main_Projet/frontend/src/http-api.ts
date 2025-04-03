@@ -43,6 +43,40 @@ function getSimilarImages() {
     });
 }
 
+const numberreffilter = ref();
+const filterref = ref();
+
+function applyFilter() {
+  var filter = "";
+  var number = (<HTMLInputElement>document.getElementById("number")).value;
+  if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil1"))?.value;
+
+  } else if ((<HTMLInputElement>document.getElementById("fil2"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil2"))?.value;
+
+  } else if ((<HTMLInputElement>document.getElementById("fil3"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil3"))?.value;
+
+  } else {
+    filter = (<HTMLInputElement>document.getElementById("fil4"))?.value;
+  }
+  numberreffilter.value = number.toString();
+  filterref.value = filter;
+  return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
+    .then(function (response) {
+      console.log(response);
+      /*similarImages.value = response.data;
+      console.log(similarImages.value);
+      ok.value = 1;
+      console.log(similarImages.value);
+      localStorage.setItem("simImages", similarImages.value);
+      router.push({ name: "similar", params: { id: localStorage.getItem("id") } })*/
+    }).catch(function (e) {
+      console.log(e);
+    });
+}
+
 const ok = ref(0);
 
 const image_real = ref();
@@ -154,4 +188,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, getSimilarImages, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real }
+export { images, similarImages, getImages, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real }
