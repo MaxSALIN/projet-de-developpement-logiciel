@@ -164,6 +164,11 @@ public class Database implements InitializingBean {
         return finalString;
     }
 
+    public Collection<Image> retrieveFromDirectory(final String name) throws Exception {
+        return jdbcTemplate.query("SELECT directory, name, type, size FROM gallery WHERE directory = ?",
+                new BeanPropertyRowMapper<>(Image.class), name);
+    }
+
     public Collection<Image> retrieveAll() throws Exception {
         return jdbcTemplate.query("SELECT directory, name, type, size FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));

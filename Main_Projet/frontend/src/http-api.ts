@@ -126,6 +126,17 @@ const imageSize = ref();
 const imageType = ref();
 const imageName = ref();
 
+
+function getImagesofFolder(name: string) {
+  return axios.get('/images/folder/' + name)
+    .then(function (response) {
+      images.value = response.data;
+      console.log(images.value);
+    }).catch(function (e) {
+      console.log(e);
+    });
+}
+
 function downloadImage(image: any) {
   axios.get('/images/' + image.id + '/content', { responseType: "blob" })
     .then(function (response) {
@@ -185,14 +196,14 @@ function handleDirectoryUpload(event: string) {
 
 
 function handleDirectoryCreate(event: string) {
-  if (event == "images"){
+  if (event == "images") {
     folder.value = ''
   }
-  else if (event == ""){
+  else if (event == "") {
     folder.value = ''
   }
   else {
-  folder.value = event;
+    folder.value = event;
   }
 }
 
@@ -200,7 +211,7 @@ function submitFile() {
   let formData = new FormData();
 
   formData.append('file', file);
-  if (directory == 'images'){
+  if (directory == 'images') {
     directory = '*'
   }
   axios.post('/images/' + directory,
@@ -219,7 +230,7 @@ function submitFile() {
     });
 }
 
-function submitDir(dir : string) {
+function submitDir(dir: string) {
   axios.post('/images/createdir/' + dir
   ).then(function () {
     console.log('SUCCESS!!');
@@ -250,4 +261,8 @@ function saveFile(image: any) {
 
 
 
+<<<<<<< HEAD
 export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories, changeRadio }
+=======
+export { image, getImagesofFolder, images, similarImages, folder, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }
+>>>>>>> f1384d7 (better gallery ( A.vue ) and Folder.vue added)
