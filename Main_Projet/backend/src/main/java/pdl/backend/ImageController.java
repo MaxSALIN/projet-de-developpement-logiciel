@@ -145,7 +145,7 @@ public class ImageController {
         Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
         database.create(img_filtered);
       }  
-      else if ("Change_Color".equals(FILTER)) {
+      else if ("Change_Color".equals(FILTER) && (N>=0 && N<=360)) {
         Filters.changeColor(directory_img, name_img, N);
         String directory="change_color";
         String name="Change_Color_"+name_img;

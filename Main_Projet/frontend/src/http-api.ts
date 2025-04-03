@@ -62,20 +62,50 @@ function getSimilarImages(id: string) {
 const numberreffilter = ref();
 const filterref = ref();
 
+function changeRadio(){
+  var hue = <HTMLInputElement>document.getElementById("hue");
+  var pixel = <HTMLInputElement>document.getElementById("pixel");
+  if(hue!=null || pixel !=null){
+    if ((<HTMLInputElement>document.getElementById("fil3"))?.checked){
+      hue.style.display = "block";
+      pixel.style.display = "none";
+    }
+    else if((<HTMLInputElement>document.getElementById("fil4"))?.checked){
+      hue.style.display = "none";
+      pixel.style.display = "block";
+    }
+    else{
+      hue.style.display = "none";
+      pixel.style.display = "none";
+    }
+    
+  }
+  
+}
+
+
+
 function applyFilter(id: string) {
   var filter = "";
-  var number = (<HTMLInputElement>document.getElementById("number")).value;
+  
+  //var number = (<HTMLInputElement>document.getElementById("number")).value;
   if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
     filter = (<HTMLInputElement>document.getElementById("fil1"))?.value;
+    var number = "0";
 
   } else if ((<HTMLInputElement>document.getElementById("fil2"))?.checked) {
     filter = (<HTMLInputElement>document.getElementById("fil2"))?.value;
+    var number = "0";
 
   } else if ((<HTMLInputElement>document.getElementById("fil3"))?.checked) {
     filter = (<HTMLInputElement>document.getElementById("fil3"))?.value;
+    var number = (<HTMLInputElement>document.getElementById("numberHue")).value;
+    console.log(number);
+    console.log(number.toString);
 
   } else {
     filter = (<HTMLInputElement>document.getElementById("fil4"))?.value;
+    var number = (<HTMLInputElement>document.getElementById("numberPixel")).value;
   }
   numberreffilter.value = number.toString();
   filterref.value = filter;
@@ -153,6 +183,7 @@ function handleDirectoryUpload(event: string) {
   directory = event;
 }
 
+
 function handleDirectoryCreate(event: string) {
   if (event == "images"){
     folder.value = ''
@@ -219,4 +250,4 @@ function saveFile(image: any) {
 
 
 
-export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }
+export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories, changeRadio }
