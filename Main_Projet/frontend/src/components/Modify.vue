@@ -1,7 +1,9 @@
 <script setup lang="ts">
 //import { ref } from 'vue'
+import { useRoute } from 'vue-router';
 import { applyFilter }  from '../http-api'
 
+let number = useRoute().params.id as string;
 
 //const buttonImage = ref('buttonCenterImage') 
 
@@ -26,7 +28,7 @@ import { applyFilter }  from '../http-api'
           <label for="fil4">Pixel filter</label>
           </div>
 
-         <input type="submit" value="Apply your filter NOW!" @click="applyFilter()"/>
+         <input type="submit" value="Apply your filter NOW!" @click="applyFilter(number)"/>
 
 <!--<div id="divImg" v-for="simage in similarImages" :class="buttonImage">
     <router-link :to="/image/+simage.id" @click="downloadImage(simage)"> <img id="img" :src="concatURL(simage.id)" ></router-link>

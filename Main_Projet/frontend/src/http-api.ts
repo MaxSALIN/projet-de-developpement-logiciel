@@ -62,7 +62,7 @@ function getSimilarImages(id: string) {
 const numberreffilter = ref();
 const filterref = ref();
 
-function applyFilter() {
+function applyFilter(id: string) {
   var filter = "";
   var number = (<HTMLInputElement>document.getElementById("number")).value;
   if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
@@ -79,7 +79,7 @@ function applyFilter() {
   }
   numberreffilter.value = number.toString();
   filterref.value = filter;
-  return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
+  return axios.get('/images/' + id + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
     .then(function (response) {
       console.log(response);
 
