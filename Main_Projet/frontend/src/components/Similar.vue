@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { downloadImage, concatURL, similarImages, getSimilarImages }  from '../http-api'
+import { useRoute } from 'vue-router';
 
 
 const buttonImage = ref('buttonCenterImage') 
+let number = useRoute().params.id as string;
+
 
 </script>
 
@@ -22,10 +25,26 @@ const buttonImage = ref('buttonCenterImage')
           <label for="des2">Hue and Saturation</label>
           </div>
 
-         <input type="submit" value="More images!" @click="getSimilarImages()"/>
+         <input type="submit" value="More images!" @click="getSimilarImages(number)"/>
 
 <div id="divImg" v-for="simage in similarImages" :class="buttonImage">
-    <router-link :to="/image/+simage.id" @click="downloadImage(simage)"> <img id="img" :src="concatURL(simage.id)" ></router-link>
+    <router-link :to="/image/+simage.id" :click="downloadImage(simage)"> <img id="img" :src="concatURL(simage.id)" ></router-link>
   <p>Similarité de l'image: {{ simage.similarité }}</p>
 </div>
 </template>
+
+<style scoped>
+
+
+#img {
+  width: 18em;
+  height: 18em;
+  object-fit: contain;
+  will-change: filter;
+  transition: filter 300ms;
+}
+#img:hover {
+    filter: drop-shadow(0 0 1em #4b51b6aa);
+    transform: scale(1.1);
+}
+</style>

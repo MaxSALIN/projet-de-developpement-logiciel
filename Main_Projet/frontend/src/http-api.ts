@@ -3,7 +3,10 @@ import { ref } from 'vue';
 import router from './router';
 
 const images = ref();
+const directories = ref();
 const similarImages = ref();
+const folder = ref();
+folder.value = ''
 
 function getImages() {
   return axios.get('/images').then(function (response) {
@@ -14,12 +17,30 @@ function getImages() {
   })
 }
 
+function getDirectories() {
+  return axios.get('/images/directories').then(function (response) {
+    console.log(response);
+
+    directories.value = response.data;
+    console.log(directories.value);
+  })
+}
+
 const numberref = ref();
 const descrref = ref();
+const image = ref();
 
 
+function getImage(id: string) {
+  return axios.get('/images/' + id + '/metadata').then(function (response) {
+    image.value = response.data;
+    console.log(image.value);
+  }).catch(function (e) {
+    console.log(e);
+  });
+}
 
-function getSimilarImages() {
+function getSimilarImages(id: string) {
   var descr = "";
   var number = (<HTMLInputElement>document.getElementById("number")).value;
   if ((<HTMLInputElement>document.getElementById("des1"))?.checked) {
@@ -29,15 +50,39 @@ function getSimilarImages() {
   }
   numberref.value = number.toString();
   descrref.value = descr;
-  return axios.get('/images/' + localStorage.getItem("id") + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
+  return axios.get('/images/' + id + "/similar?number=" + numberref.value + "&descriptor=" + descrref.value)
     .then(function (response) {
-      console.log(response);
       similarImages.value = response.data;
-      console.log(similarImages.value);
-      ok.value = 1;
-      console.log(similarImages.value);
-      localStorage.setItem("simImages", similarImages.value);
-      router.push({ name: "similar", params: { id: localStorage.getItem("id") } })
+      router.push({ name: "similar", params: { id: id } })
+    }).catch(function (e) {
+      console.log(e);
+    });
+}
+
+const numberreffilter = ref();
+const filterref = ref();
+
+function applyFilter() {
+  var filter = "";
+  var number = (<HTMLInputElement>document.getElementById("number")).value;
+  if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil1"))?.value;
+
+  } else if ((<HTMLInputElement>document.getElementById("fil2"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil2"))?.value;
+
+  } else if ((<HTMLInputElement>document.getElementById("fil3"))?.checked) {
+    filter = (<HTMLInputElement>document.getElementById("fil3"))?.value;
+
+  } else {
+    filter = (<HTMLInputElement>document.getElementById("fil4"))?.value;
+  }
+  numberreffilter.value = number.toString();
+  filterref.value = filter;
+  return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
+    .then(function (response) {
+
+
     }).catch(function (e) {
       console.log(e);
     });
@@ -66,12 +111,7 @@ function applyFilter() {
   return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
     .then(function (response) {
       console.log(response);
-      /*similarImages.value = response.data;
-      console.log(similarImages.value);
-      ok.value = 1;
-      console.log(similarImages.value);
-      localStorage.setItem("simImages", similarImages.value);
-      router.push({ name: "similar", params: { id: localStorage.getItem("id") } })*/
+
     }).catch(function (e) {
       console.log(e);
     });
@@ -86,7 +126,7 @@ const imageType = ref();
 const imageName = ref();
 
 function downloadImage(image: any) {
-  axios.get('/images/' + image.id, { responseType: "blob" })
+  axios.get('/images/' + image.id + '/content', { responseType: "blob" })
     .then(function (response) {
       const reader = new window.FileReader();
       reader.readAsDataURL(response.data);
@@ -100,20 +140,11 @@ function downloadImage(image: any) {
 
         } else {
           imageEl.setAttribute("src", imageDataUrl);
-          image_real.value = image;
-          imageID.value = image.id;
-          imageSize.value = image.size;
-          imageType.value = image.type; // essayer de mieux presenter ?
-          imageName.value = image.name; // de meme ?
           ok.value = 1;
+
         }
       }
     });
-  localStorage.setItem("name", image.name);
-  localStorage.setItem("id", image.id);
-  localStorage.setItem("size", image.size);
-  localStorage.setItem("type", image.type);
-
 
 
 }
@@ -137,23 +168,40 @@ function deleteImage(id: number) {
 }
 
 function concatURL(imageId: any) {
-  return "/images/".concat(imageId)
+  return "/images/".concat(imageId).concat("/content");
 }
 
 
 let file = ''
+let directory = ''
 function handleFileUpload(event: any) {
   file = event.target.files[0];
-
 }
 
+function handleDirectoryUpload(event: string) {
+  directory = event;
+}
+
+function handleDirectoryCreate(event: string) {
+  if (event == "images"){
+    folder.value = ''
+  }
+  else if (event == ""){
+    folder.value = ''
+  }
+  else {
+  folder.value = event;
+  }
+}
 
 function submitFile() {
   let formData = new FormData();
 
   formData.append('file', file);
-
-  axios.post('/images',
+  if (directory == 'images'){
+    directory = '*'
+  }
+  axios.post('/images/' + directory,
     formData,
     {
       headers: {
@@ -163,6 +211,18 @@ function submitFile() {
   ).then(function () {
     console.log('SUCCESS!!');
     getImages();
+  })
+    .catch(function () {
+      console.log('FAILURE!!');
+    });
+}
+
+function submitDir(dir : string) {
+  axios.post('/images/createdir/' + dir
+  ).then(function () {
+    console.log('SUCCESS!!');
+    getImages();
+    getDirectories();
   })
     .catch(function () {
       console.log('FAILURE!!');
@@ -188,4 +248,4 @@ function saveFile(image: any) {
 
 
 
-export { images, similarImages, getImages, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, submitFile, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real }
+export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }

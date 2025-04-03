@@ -165,7 +165,7 @@ public class Database implements InitializingBean {
     }
 
     public Collection<Image> retrieveAll() throws Exception {
-        return jdbcTemplate.query("SELECT name, type, size FROM gallery",
+        return jdbcTemplate.query("SELECT directory, name, type, size FROM gallery",
                 new BeanPropertyRowMapper<>(Image.class));
     }
 

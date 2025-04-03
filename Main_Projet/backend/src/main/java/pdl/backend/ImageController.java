@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
@@ -59,6 +60,7 @@ public class ImageController {
       Collection<Image> listAll = database.retrieveAll();
       for (Image img : listAll) {
         ObjectNode node = mapper.createObjectNode();
+        node.put("folder", img.getDirectory());
         node.put("id", database.getId(img.getName()));
         node.put("name", img.getName());
         node.put("type", img.getType());
@@ -68,12 +70,31 @@ public class ImageController {
     } catch (Exception e) {
       System.err.println(e);
     }
+    return nodes;
+  }
 
+  // GET /directories
+  @RequestMapping(value = "/images/directories", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getDirectoriesList() throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    try {
+      Path folderPath = Paths.get("src/main/resources/images");
+      try (Stream<Path> paths = Files.walk(folderPath)) {
+          paths.filter(Files::isDirectory).forEach((Path path) ->{
+            ObjectNode node = mapper.createObjectNode();
+            node.put("name", path.getFileName().toString());
+            nodes.add(node);
+          });
+        }
+    } catch (Exception e) {
+      System.err.println(e);
+    }
     return nodes;
   }
 
   // GET /images/{id}
-  @RequestMapping(value = "/images/{id}", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
+  @RequestMapping(value = "/images/{id}/content", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
   public ResponseEntity<?> getImage(@PathVariable("id") long id) throws IOException {
     byte[] fileContent = new byte[] {};
     try {
@@ -147,6 +168,26 @@ public class ImageController {
       System.err.println(e);
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
+  }
+
+  // GET /image/{id}
+  @RequestMapping(value = "/images/{id}/metadata", method = RequestMethod.GET, produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public ArrayNode getImageInfo(@PathVariable("id") long id) throws IOException {
+    ArrayNode nodes = mapper.createArrayNode();
+    try {
+      ObjectNode node = mapper.createObjectNode();
+      node.put("id", id);
+      node.put("name", database.retrieve_name(id));
+      System.out.println(database.retrieve_name(id));
+      node.put("type", database.retrieve_type(id));
+      node.put("size", database.retrieve_size(id));
+      nodes.add(node);
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+
+    return nodes;
   }
 
   // GET /images/{id}/similar
@@ -258,5 +299,17 @@ public class ImageController {
       return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
   }
+
+  @RequestMapping(value = "/images/createdir/{dir}", method = RequestMethod.POST)
+  public ResponseEntity<?> addDirectory(@PathVariable("dir") String dir,
+      RedirectAttributes redirectAttributes) throws IOException {
+        Path folderPath = Paths.get("src/main/resources/images");
+        try {
+          new File(folderPath.toString() + "/" + dir).mkdirs();
+        } catch (Exception e) {
+          System.err.println(e);
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
+      }
 
 }

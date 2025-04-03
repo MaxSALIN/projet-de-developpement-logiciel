@@ -1,22 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getImages, images, concatURL, saveFile, deleteImage, downloadImage }  from '../http-api'
+import { getImages, images, directories, folder, concatURL, saveFile, deleteImage, downloadImage, getDirectories, handleDirectoryCreate }  from '../http-api'
 
 defineProps<{ msg: string }>()
 const titleClass = ref('title') 
 const buttonImage = ref('buttonCenterImage') 
 
 getImages();
+getDirectories();
 
 </script>
 
 <template>
   <h1 :class="titleClass">{{ msg }}</h1>
+  <label>Folder
+    <select>
+      <option>Choose a folder</option>
+      <option v-for="directory in directories" @click="handleDirectoryCreate( directory.name )"> {{ directory.name }}</option>
+
+    </select>
+
+  </label>
+  <pre></pre>
   <div id="divImg" v-for="image in images" :class="buttonImage">
- <router-link :to="/image/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link> 
-    <button type="button" @click="saveFile(image)"> Save File On Disk</button>
-    <button type="button" @click="deleteImage(image.id)">Delete</button>
+    <label v-if="image.folder === folder || folder == ''">
+      <router-link :to="/image/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link> 
+      <button type="button" @click="saveFile(image)"> Save File On Disk</button>
+      <button type="button" @click="deleteImage(image.id)">Delete</button>
+    </label>
   </div>
+  
 
 </template>
 
@@ -43,15 +56,17 @@ getImages();
   transition: filter 300ms;
 }
 
+
 #img:hover {
     filter: drop-shadow(0 0 1em #4b51b6aa);
+    transform: scale(1.1);
 }
 
 .buttonCenterImage{
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 5em;
 }
 
 </style>
