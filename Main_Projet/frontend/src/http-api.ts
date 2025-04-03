@@ -62,32 +62,32 @@ function getSimilarImages(id: string) {
 const numberreffilter = ref();
 const filterref = ref();
 
-function changeRadio(){
+function changeRadio() {
   var hue = <HTMLInputElement>document.getElementById("hue");
   var pixel = <HTMLInputElement>document.getElementById("pixel");
-  if(hue!=null || pixel !=null){
-    if ((<HTMLInputElement>document.getElementById("fil3"))?.checked){
+  if (hue != null || pixel != null) {
+    if ((<HTMLInputElement>document.getElementById("fil3"))?.checked) {
       hue.style.display = "block";
       pixel.style.display = "none";
     }
-    else if((<HTMLInputElement>document.getElementById("fil4"))?.checked){
+    else if ((<HTMLInputElement>document.getElementById("fil4"))?.checked) {
       hue.style.display = "none";
       pixel.style.display = "block";
     }
-    else{
+    else {
       hue.style.display = "none";
       pixel.style.display = "none";
     }
-    
+
   }
-  
+
 }
 
 
 
 function applyFilter(id: string) {
   var filter = "";
-  
+
   //var number = (<HTMLInputElement>document.getElementById("number")).value;
   if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
     filter = (<HTMLInputElement>document.getElementById("fil1"))?.value;
@@ -261,8 +261,4 @@ function saveFile(image: any) {
 
 
 
-<<<<<<< HEAD
-export { image, images, similarImages, folder , getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories, changeRadio }
-=======
-export { image, getImagesofFolder, images, similarImages, folder, getImage, getImages, getDirectories, getSimilarImages, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories }
->>>>>>> f1384d7 (better gallery ( A.vue ) and Folder.vue added)
+export { image, images, getImagesofFolder, similarImages, folder, getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories, changeRadio }
