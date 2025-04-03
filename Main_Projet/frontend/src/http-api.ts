@@ -81,35 +81,6 @@ function applyFilter() {
   filterref.value = filter;
   return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
     .then(function (response) {
-
-
-    }).catch(function (e) {
-      console.log(e);
-    });
-}
-
-const numberreffilter = ref();
-const filterref = ref();
-
-function applyFilter() {
-  var filter = "";
-  var number = (<HTMLInputElement>document.getElementById("number")).value;
-  if ((<HTMLInputElement>document.getElementById("fil1"))?.checked) {
-    filter = (<HTMLInputElement>document.getElementById("fil1"))?.value;
-
-  } else if ((<HTMLInputElement>document.getElementById("fil2"))?.checked) {
-    filter = (<HTMLInputElement>document.getElementById("fil2"))?.value;
-
-  } else if ((<HTMLInputElement>document.getElementById("fil3"))?.checked) {
-    filter = (<HTMLInputElement>document.getElementById("fil3"))?.value;
-
-  } else {
-    filter = (<HTMLInputElement>document.getElementById("fil4"))?.value;
-  }
-  numberreffilter.value = number.toString();
-  filterref.value = filter;
-  return axios.get('/images/' + localStorage.getItem("id") + "/modify?number=" + numberreffilter.value + "&filter=" + filterref.value)
-    .then(function (response) {
       console.log(response);
 
     }).catch(function (e) {
