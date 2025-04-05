@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getImages, images, directories, folder, concatURL, saveFile, deleteImage, downloadImage, getDirectories, handleDirectoryCreate }  from '../http-api'
+import { getImages, images, directories, concatURL, saveFile, deleteImage, downloadImage, getDirectories }  from '../http-api'
 
 defineProps<{ msg: string }>()
 const titleClass = ref('title') 
@@ -13,21 +13,22 @@ getDirectories();
 
 <template>
   <h1 :class="titleClass">{{ msg }}</h1>
-  <label>Folder
-    <select>
-      <option>Choose a folder</option>
-      <option v-for="directory in directories" @click="handleDirectoryCreate( directory.name )"> {{ directory.name }}</option>
 
-    </select>
-
-  </label>
   <pre></pre>
+</hr>
+</hr>
+  <div id="block">
+      <div id="divFolder" class="slide" v-for="folder in directories">
+        <div id="insider">
+        <router-link :to="/folder/+folder.name"><button type="button"> {{ folder.name }}</button></router-link>
+        </div>
+      </div>
+  </div>
+
   <div id="divImg" v-for="image in images" :class="buttonImage">
-    <label v-if="image.folder === folder || folder == ''">
       <router-link :to="/image/+image.id" @click="downloadImage(image)"><img id="img" :src="concatURL(image.id)" ></router-link> 
       <button type="button" @click="saveFile(image)"> Save File On Disk</button>
       <button type="button" @click="deleteImage(image.id)">Delete</button>
-    </label>
   </div>
   
 
@@ -48,6 +49,26 @@ getDirectories();
   height: 20em;
 }
 
+#insider {
+  display: block;
+  align-items: center;
+}
+#divFolder {
+  display: inline-flex;
+  align-items: center;
+  margin:1vmin;
+}
+#divFolder:hover {
+  transform: scale(1.05);
+}
+
+#block {
+  display: block;
+  width: 100%;
+  height: 7em;
+  align-items: center;
+
+}
 #img {
   width: 18em;
   height: 18em;

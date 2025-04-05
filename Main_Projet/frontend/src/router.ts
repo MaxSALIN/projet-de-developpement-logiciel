@@ -27,6 +27,12 @@ const routes: Array<RouteRecordRaw> = [
         ]
 
     },
+    {
+        path: '/folder/:name',
+        name: 'folder',
+        component: () => import("./components/Folder.vue"),
+        props: ({ params }) => ({ name: String(params.name) || 'images' })
+    },
 
 ];
 
