@@ -238,7 +238,7 @@ function submitDir(dir: string) {
 
 //save an image on the computer
 function saveFile(image: any) {
-  axios.get('/images/' + image.id, { responseType: "blob" })
+  axios.get('/images/' + image.id + '/content', { responseType: "blob" })
     .then(function (response) {
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const a = document.createElement("a");

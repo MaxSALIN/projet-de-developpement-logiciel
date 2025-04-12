@@ -57,7 +57,7 @@ public class Database implements InitializingBean {
                             directory = folderPath.relativize(path).getParent().toString();
                             name = folderPath.relativize(path).getFileName().toString();
                         }
-                        System.out.println(directory);
+                        
                         InputStream pathInputStream = new FileInputStream(path.toFile());
                         String dimensions = "";
                         try {
