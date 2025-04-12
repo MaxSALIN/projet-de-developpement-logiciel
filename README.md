@@ -8,7 +8,6 @@ Besoin 18 : Documentation d’installation et de test
 
 Installer le projet :
     - placez vous dans l3c/Main_Projet
-    - faire "mvn clean install" pour préparer le projet
 
 Lancement du serveur :
     - Rentrer dans le terminal les commandes "export DATABASE_NAME=<name>" et "export DATABASE_PASSWORD=<password>" avec les name et password de votre compte sur la database
