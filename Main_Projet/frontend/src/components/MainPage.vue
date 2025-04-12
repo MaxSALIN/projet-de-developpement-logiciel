@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import HelloWorld from './HelloWorld.vue'
-import A from './A.vue'
+import A from './Gallery.vue'
 </script>
 
 <template>
