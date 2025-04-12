@@ -7,6 +7,7 @@ Besoin 18 : Documentation d’installation et de test
     — Firefox
 
 Installer le projet :
+    - placez vous dans l3c/Main_Projet
     - faire "mvn clean install" pour préparer le projet
 
 Lancement du serveur :
