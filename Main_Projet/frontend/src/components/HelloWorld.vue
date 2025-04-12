@@ -15,40 +15,34 @@ const message = ref();
   <h1 :class="titleClass"> {{ msg }}</h1>
   <h2 :class="namesClass"> Clément SIMON, Loïc THIN, Maxence SALIN</h2>
   <div class="card">
-  <p> Voici un bouton pour vous amuser</p>
+    <p> Voici un bouton pour vous amuser</p>
     <button type="button" @click="count++">Le compte est de : {{ count }}</button>
   </div>
-
-
-
-      <hr/>
-		<div>
-
-			<h1 :class="titleClass">Déposez votre image ici</h1>
-			<label>File
-				<input type="file" @change="handleFileUpload( $event )"/>
-			</label>
-      <br />
+  <hr/>
+	<div>
+		<h1 :class="titleClass">Déposez votre image ici</h1>
+		<label>File
+		  <input type="file" @change="handleFileUpload( $event )"/>
+	  </label>
+    <br />
       <label>Folder
 				<select>
           <option>Choose a folder for the image</option>
           <option v-for="directory in directories" @click="handleDirectoryUpload( directory.name )"> {{ directory.name }}</option>
-
         </select>
-
 			</label>
-			<br>
-			<button v-on:click="submitFile()">Submit</button>
-      <hr/>
-      <h1 :class="titleClass">Créez un nouveau dossier</h1>
-      <label>Name of new folder
+		<br>
+		<button v-on:click="submitFile()">Submit</button>
+    <hr/>
+    <h1 :class="titleClass">Créez un nouveau dossier</h1>
+    <label>Name of new folder
       <pre></pre>
-        <input v-model="message" placeholder="name"/>
-      </label>
-      <pre></pre>
-      <button v-on:click="submitDir(message)">Create</button>
-      <hr/>
-		</div>
+      <input v-model="message" placeholder="name"/>
+    </label>
+    <pre></pre>
+    <button v-on:click="submitDir(message)">Create</button>
+    <hr/>
+	</div>
 </template>
 
 

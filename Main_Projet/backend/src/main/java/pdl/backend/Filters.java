@@ -19,7 +19,6 @@ public class Filters {
     public static void blackAndWhite(String directory, String name) {
 		//create the input and output images
 		String path = "src/main/resources/images/";
-		System.out.println(path+directory+"/"+name);
         BufferedImage bufferedInput = UtilImageIO.loadImage(path+directory+"/"+name);
         Planar<GrayF32> imageSelected = ConvertBufferedImage.convertFromPlanar(bufferedInput, null, true, GrayF32.class);
         Planar<GrayF32> imageOutput = imageSelected.createSameShape();
@@ -81,10 +80,9 @@ public class Filters {
 		}
 
 		//saving the output image	
-        final String outputPath =  path+"change_color/Change_Color_"+name;
+        final String outputPath =  path+"change_color/Change_Color_"+(int)hue+'_'+name;
 		
 		System.out.println("Image saved in: " + outputPath);
-		System.err.println("Image saved in: " + outputPath);
 		UtilImageIO.saveImage(imageOutput, outputPath);
     }
 

@@ -13,17 +13,14 @@ getImage(number);
 </script>
 
 <template>
-           <router-link to="/">Back Home</router-link> 
-      <p> Name : {{ image[0].name }}</p>
-      <img id="image0" :src="path">  
-        <p> ID:  {{ useRoute().params.id }}</p>
-        <p> Size: {{ image[0].size }}</p>
-        <p> Type: {{ image[0].type }}</p>
-
-
-           <router-link :to="'/image/'+useRoute().params.id+'/similar'"> <button type="button" >Similar Images</button></router-link>   <router-link :to="'/image/'+useRoute().params.id+'/modify'"> <button type="button" >Modify</button></router-link>
-
-        </hr>
+    <router-link to="/">Back Home</router-link> 
+    <p> Name : {{ image[0].name }}</p>
+    <img id="image0" :src="path">  
+    <p> ID:  {{ useRoute().params.id }}</p>
+    <p> Size: {{ image[0].size }}</p>
+    <p> Type: {{ image[0].type }}</p>
+    <router-link :to="'/image/'+useRoute().params.id+'/similar'"> <button type="button" >Similar Images</button></router-link>   <router-link :to="'/image/'+useRoute().params.id+'/modify'"> <button type="button" >Modify</button></router-link>
+</hr>
 
 
 <RouterView></RouterView>

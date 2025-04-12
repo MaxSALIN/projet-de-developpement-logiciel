@@ -153,6 +153,7 @@ public class ImageController {
       if(N<0){
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Incorrect number, should be higher than 0");
       }
+      //black and white filter
       if ("Black_And_White".equals(FILTER)) {
         Filters.blackAndWhite(directory_img, name_img);
         String directory="black_and_white";
@@ -162,6 +163,7 @@ public class ImageController {
         Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
         database.create(img_filtered);
       } 
+      //gaussian blur filter
       else if ("Gaussian_Blur".equals(FILTER)) {
         Filters.gaussianBlur(directory_img, name_img);
         String directory="gaussian_blur";
@@ -170,14 +172,16 @@ public class ImageController {
         Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
         database.create(img_filtered);
       }  
+      //change color filter
       else if ("Change_Color".equals(FILTER) && (N>=0 && N<=360)) {
         Filters.changeColor(directory_img, name_img, N);
         String directory="change_color";
-        String name="Change_Color_"+name_img;
+        String name="Change_Color_"+(int)N+"_"+name_img;
         String similar = path+directory+"/"+name;
         Image img_filtered= new Image(directory, name, database.retrieve_type(id), database.retrieve_size(id), SimilarImages.histogramRGB(similar), SimilarImages.histogramHS(similar));
         database.create(img_filtered);
       }
+      //pixel filter
       else if ("Pixel".equals(FILTER)) {
         Filters.pixelFilter(directory_img, name_img, N);
         String directory="pixel";
@@ -263,6 +267,7 @@ public class ImageController {
   /////////////////////////////////// DELETE Request
   /////////////////////////////////// /////////////////////////////////////////////
 
+  //DELETE image
   @RequestMapping(value = "/images/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<?> deleteImage(@PathVariable("id") long id) {
     try {
@@ -279,6 +284,7 @@ public class ImageController {
   /////////////////////////////////// POST Request
   /////////////////////////////////// /////////////////////////////////////////////
 
+  //POST image
   @RequestMapping(value = "/images/{dir}", method = RequestMethod.POST)
   public ResponseEntity<?> addImage(@PathVariable("dir") String dir, @RequestParam("file") MultipartFile file,
       RedirectAttributes redirectAttributes) throws IOException {
@@ -325,6 +331,7 @@ public class ImageController {
     }
   }
 
+  //POST directory
   @RequestMapping(value = "/images/createdir/{dir}", method = RequestMethod.POST)
   public ResponseEntity<?> addDirectory(@PathVariable("dir") String dir,
       RedirectAttributes redirectAttributes) throws IOException {

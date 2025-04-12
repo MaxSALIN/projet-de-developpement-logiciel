@@ -2,12 +2,38 @@ import axios from 'axios';
 import { ref } from 'vue';
 import router from './router';
 
+//all variables
 const images = ref();
 const directories = ref();
 const similarImages = ref();
 const folder = ref();
 folder.value = ''
 
+//similar
+const numberref = ref();
+const descrref = ref();
+const image = ref();
+
+//modify/filter
+const numberreffilter = ref();
+const filterref = ref();
+
+const ok = ref(0);
+
+//current image
+const image_real = ref();
+const imageID = ref();
+const imageSize = ref();
+const imageType = ref();
+const imageName = ref();
+
+//handle upload
+let file = ''
+let directory = ''
+
+/////////////////////////////////////////////////////////////////////////
+
+//get
 function getImages() {
   return axios.get('/images').then(function (response) {
     console.log(response);
@@ -26,11 +52,6 @@ function getDirectories() {
   })
 }
 
-const numberref = ref();
-const descrref = ref();
-const image = ref();
-
-
 function getImage(id: string) {
   return axios.get('/images/' + id + '/metadata').then(function (response) {
     image.value = response.data;
@@ -40,6 +61,7 @@ function getImage(id: string) {
   });
 }
 
+//similar page
 function getSimilarImages(id: string) {
   var descr = "";
   var number = (<HTMLInputElement>document.getElementById("number")).value;
@@ -59,9 +81,10 @@ function getSimilarImages(id: string) {
     });
 }
 
-const numberreffilter = ref();
-const filterref = ref();
+/////////////////////////////////////////////////////////////////////////
+//filter/modify page
 
+//to be able to input a number for hue and pixel
 function changeRadio() {
   var hue = <HTMLInputElement>document.getElementById("hue");
   var pixel = <HTMLInputElement>document.getElementById("pixel");
@@ -83,8 +106,7 @@ function changeRadio() {
 
 }
 
-
-
+//request for the filter
 function applyFilter(id: string) {
   var filter = "";
 
@@ -119,14 +141,8 @@ function applyFilter(id: string) {
 }
 
 
-const ok = ref(0);
-
-const image_real = ref();
-const imageID = ref();
-const imageSize = ref();
-const imageType = ref();
-const imageName = ref();
-
+/////////////////////////////////////////////////////////////////////////
+//folders
 
 function getImagesofFolder(name: string) {
   return axios.get('/images/folder/' + name)
@@ -138,6 +154,10 @@ function getImagesofFolder(name: string) {
     });
 }
 
+/////////////////////////////////////////////////////////////////////////
+//images
+
+//retrieve all images (for the gallery for example)
 function downloadImage(image: any) {
   axios.get('/images/' + image.id + '/content', { responseType: "blob" })
     .then(function (response) {
@@ -158,10 +178,9 @@ function downloadImage(image: any) {
         }
       }
     });
-
-
 }
 
+//delete the image 
 function deleteImage(id: number) {
   axios.delete('/images/' + (id),
     {
@@ -180,34 +199,7 @@ function deleteImage(id: number) {
   );
 }
 
-function concatURL(imageId: any) {
-  return "/images/".concat(imageId).concat("/content");
-}
-
-
-let file = ''
-let directory = ''
-function handleFileUpload(event: any) {
-  file = event.target.files[0];
-}
-
-function handleDirectoryUpload(event: string) {
-  directory = event;
-}
-
-
-function handleDirectoryCreate(event: string) {
-  if (event == "images") {
-    folder.value = ''
-  }
-  else if (event == "") {
-    folder.value = ''
-  }
-  else {
-    folder.value = event;
-  }
-}
-
+//upload an image
 function submitFile() {
   let formData = new FormData();
 
@@ -231,6 +223,7 @@ function submitFile() {
     });
 }
 
+//upload a directory
 function submitDir(dir: string) {
   axios.post('/images/createdir/' + dir
   ).then(function () {
@@ -243,6 +236,7 @@ function submitDir(dir: string) {
     });
 }
 
+//save an image on the computer
 function saveFile(image: any) {
   axios.get('/images/' + image.id, { responseType: "blob" })
     .then(function (response) {
@@ -260,6 +254,33 @@ function saveFile(image: any) {
     });
 }
 
+/////////////////////////////////////////////////////////////////////////
+//auxilary functions
+
+function concatURL(imageId: any) {
+  return "/images/".concat(imageId).concat("/content");
+}
+
+function handleFileUpload(event: any) {
+  file = event.target.files[0];
+}
+
+function handleDirectoryUpload(event: string) {
+  directory = event;
+}
 
 
+function handleDirectoryCreate(event: string) {
+  if (event == "images") {
+    folder.value = ''
+  }
+  else if (event == "") {
+    folder.value = ''
+  }
+  else {
+    folder.value = event;
+  }
+}
+
+//expopt the variables and functions
 export { image, images, getImagesofFolder, similarImages, folder, getImage, getImages, getDirectories, getSimilarImages, applyFilter, downloadImage, concatURL, handleFileUpload, handleDirectoryUpload, handleDirectoryCreate, submitFile, submitDir, saveFile, ok, imageID, imageSize, imageType, imageName, deleteImage, image_real, directories, changeRadio }
